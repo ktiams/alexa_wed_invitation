@@ -1,65 +1,58 @@
-import Image from "next/image";
+import { createClient } from "@/lib/supabase/server";
+import { HeroSection } from "@/components/public/HeroSection";
+import { CountdownTimer } from "@/components/public/CountdownTimer";
+import { WeddingDetails } from "@/components/public/WeddingDetails";
+import { DressCodeCard } from "@/components/public/DressCodeCard";
+import { AdultsOnlyNotice } from "@/components/public/AdultsOnlyNotice";
+import { VenueSection } from "@/components/public/VenueSection";
+import { RSVPForm } from "@/components/public/RSVPForm";
+import { GiftQRCode } from "@/components/public/GiftQRCode";
+import { MessageCarousel } from "@/components/public/MessageCarousel";
+import { Footer } from "@/components/public/Footer";
+import type { WeddingSettings, GuestMessage } from "@/lib/types/database";
 
-export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+async function getPageData() {
+  const supabase = await createClient();
+
+  const [settingsRes, messagesRes] = await Promise.all([
+    supabase.from("wedding_settings").select("*").single(),
+    supabase
+      .from("guest_messages")
+      .select("id, guest_id, guest_name, message, is_approved, is_public, created_at, updated_at")
+      .eq("is_approved", true)
+      .eq("is_public", true)
+      .order("created_at", { ascending: false }),
+  ]);
+
+  return {
+    settings: settingsRes.data as WeddingSettings | null,
+    messages: (messagesRes.data ?? []) as GuestMessage[],
+  };
+}
+
+export default async function HomePage() {
+  const { settings, messages } = await getPageData();
+
+  if (!settings) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-cream">
+        <p className="font-display text-2xl italic text-muted">Próximamente</p>
       </main>
-    </div>
+    );
+  }
+
+  return (
+    <main>
+      <HeroSection />
+      <CountdownTimer />
+      <WeddingDetails settings={settings} />
+      <DressCodeCard />
+      <AdultsOnlyNotice />
+      <VenueSection />
+      <RSVPForm />
+      <GiftQRCode settings={settings} />
+      {messages.length > 0 && <MessageCarousel messages={messages} />}
+      <Footer />
+    </main>
   );
 }

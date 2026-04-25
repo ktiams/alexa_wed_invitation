@@ -1,26 +1,78 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-cormorant);
+  --font-display: var(--font-cormorant);
+  --font-body: var(--font-inter);
+
+  /* ── Warm luxury wedding palette ─────────────────────────────────────── */
+
+  /* Backgrounds */
+  --color-cream: #f7f1e8;        /* main warm ivory — page background         */
+  --color-card: #fffdf8;         /* warm card surface — replaces pure white    */
+  --color-parchment: #efe4d3;    /* deeper section tone — alternating sections */
+
+  /* Decorative / accent */
+  --color-silver: #b99b6b;       /* champagne gold — dividers & ornaments      */
+  --color-silver-light: #d8c9b8; /* warm border — cards, inputs, separators    */
+  --color-silver-dark: #7a6a5b;  /* readable taupe — labels, metadata          */
+
+  /* Typography */
+  --color-charcoal: #2a2521;     /* warm espresso — headings & primary text    */
+  --color-espresso: #1f1a17;     /* deep espresso — buttons & strong accents   */
+  --color-muted: #7a6a5b;        /* warm taupe — body & secondary text         */
+  --color-taupe: #9a8a7a;        /* placeholder text                           */
+
+  /* Gold accent */
+  --color-gold: #b99b6b;         /* = silver — keeps token explicit            */
+  --color-gold-dark: #a98d61;    /* focus ring, hover states                   */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --background: #f7f1e8;
+  --foreground: #2a2521;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), Georgia, serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #efe4d3;
+}
+::-webkit-scrollbar-thumb {
+  background: #d8c9b8;
+  border-radius: 3px;
+}
+
+/* Global focus ring — warm gold, subtle */
+*:focus-visible {
+  outline: 2px solid #b99b6b;
+  outline-offset: 2px;
+}
+
+/* Smooth transitions */
+* {
+  transition-property: color, background-color, border-color, opacity, transform, box-shadow;
+  transition-timing-function: ease;
+  transition-duration: 150ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+  }
 }
