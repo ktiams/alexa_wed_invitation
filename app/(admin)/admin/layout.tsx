@@ -8,10 +8,10 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen bg-cream">
+    <div className="min-h-screen bg-cream md:flex">
       <AdminSidebar />
-      <div className="flex-1 flex flex-col min-w-0">
-        <div className="flex-1 p-8 max-w-7xl w-full mx-auto">
+      <div className="min-w-0 flex-1">
+        <div className="mx-auto w-full max-w-7xl px-4 py-5 sm:px-6 sm:py-6 md:px-8 md:py-8">
           {children}
         </div>
       </div>

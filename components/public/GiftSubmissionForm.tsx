@@ -16,67 +16,50 @@ export function GiftSubmissionForm({ guestId }: GiftSubmissionFormProps) {
 
   if (state.success) {
     return (
-      <div className="text-center py-10">
-        <div className="w-12 h-12 border border-silver flex items-center justify-center mx-auto mb-4 text-silver-dark text-xl">
-          ✓
-        </div>
-        <p className="font-display text-2xl italic text-charcoal mb-2">Gracias</p>
-        <p className="text-sm font-sans text-muted">
-          Tu regalo ha sido registrado. Lo verificaremos en breve.
-        </p>
+      <div className="py-10 text-center">
+        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center border border-silver text-xl text-silver-dark">+</div>
+        <p className="mb-2 font-display text-2xl italic text-charcoal">Gracias</p>
+        <p className="text-sm text-muted">Tu regalo ha sido registrado. Lo verificaremos en breve.</p>
       </div>
     );
   }
 
   return (
-    <form action={formAction} className="flex flex-col gap-5 max-w-md mx-auto">
+    <form action={formAction} className="mx-auto flex max-w-2xl flex-col gap-5">
       {guestId && <input type="hidden" name="guest_id" value={guestId} />}
 
-      <p className="text-sm uppercase tracking-[0.2em] text-silver-dark font-sans text-center">
-        Registra Tu Regalo
-      </p>
+      <p className="text-center text-sm uppercase tracking-[0.2em] text-silver-dark">Registra Tu Regalo</p>
 
-      {/* Method */}
-      <div className="flex flex-col gap-1.5">
-        <span className="text-sm uppercase tracking-wider text-muted font-sans font-medium">
-          Método de Pago *
-        </span>
-        <select
-          name="method"
-          required
-          className="w-full bg-white border border-silver-light px-4 py-3 text-sm font-sans text-charcoal outline-none focus:border-silver-dark"
-        >
-          <option value="">Selecciona método</option>
-          {["ATH Móvil", "PayPal", "Zelle", "Other"].map((m) => (
-            <option key={m} value={m}>{m}</option>
-          ))}
-        </select>
+      <div className="grid gap-5 md:grid-cols-2">
+        <div className="flex flex-col gap-1.5">
+          <span className="text-sm uppercase tracking-wider text-muted">Metodo de Pago *</span>
+          <select
+            name="method"
+            required
+            className="w-full border border-silver-light bg-white px-4 py-3 text-sm text-charcoal outline-none focus:border-silver-dark"
+          >
+            <option value="">Selecciona metodo</option>
+            {["ATH Movil", "PayPal", "Zelle", "Other"].map((m) => (
+              <option key={m} value={m}>
+                {m}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <Input id="amount" name="amount" type="number" min="0" step="0.01" label="Monto (opcional)" placeholder="0.00" />
       </div>
 
-      {/* Amount */}
-      <Input
-        id="amount"
-        name="amount"
-        type="number"
-        min="0"
-        step="0.01"
-        label="Monto (opcional)"
-        placeholder="0.00"
-      />
-
-      {/* Reference */}
       <Textarea
         id="reference_note"
         name="reference_note"
         label="Nota de referencia (opcional)"
-        placeholder="ID de transacción o cualquier referencia..."
-        rows={2}
+        placeholder="ID de transaccion o cualquier referencia..."
+        rows={3}
         maxLength={200}
       />
 
-      {state.error && (
-        <p className="text-sm text-red-500 font-sans text-center">{state.error}</p>
-      )}
+      {state.error && <p className="text-center text-sm text-red-500">{state.error}</p>}
 
       <Button type="submit" size="lg" loading={pending} className="w-full">
         Registrar Regalo

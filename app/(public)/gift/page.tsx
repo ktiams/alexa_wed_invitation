@@ -6,7 +6,7 @@ import Link from "next/link";
 import type { WeddingSettings } from "@/lib/types/database";
 
 export const metadata = {
-  title: "Regalo — Anthony & Alexandra",
+  title: "Regalo - Anthony & Alexandra",
 };
 
 export default async function GiftPage({
@@ -21,41 +21,26 @@ export default async function GiftPage({
 
   return (
     <main className="min-h-screen bg-cream">
-      {/* Header */}
-      <div className="py-10 px-6 text-center border-b border-silver-light bg-white">
-        <Link
-          href="/"
-          className="font-display text-2xl font-light italic text-charcoal hover:text-muted transition-colors"
-        >
+      <div className="border-b border-silver-light bg-white px-4 py-8 text-center sm:px-6 sm:py-10">
+        <Link href="/" className="font-display text-2xl font-light italic text-charcoal transition-colors hover:text-muted sm:text-3xl">
           Anthony &amp; Alexandra
         </Link>
-        <p className="text-sm uppercase tracking-[0.2em] text-silver-dark font-sans mt-1">
-          5 de diciembre, 2026
-        </p>
+        <p className="mt-1 text-xs uppercase tracking-[0.2em] text-silver-dark sm:text-sm">5 de diciembre, 2026</p>
       </div>
 
-      {/* Confirmation message */}
       {guestId && (
-        <div className="py-10 px-6 text-center bg-white border-b border-silver-light">
-          <div className="w-10 h-10 border border-silver flex items-center justify-center mx-auto mb-4 text-silver-dark">
-            ✓
-          </div>
-          <p className="font-display text-2xl italic text-charcoal mb-2">
-            Tu RSVP ha sido recibido
-          </p>
-          <p className="text-sm font-sans text-muted">
-            ¡Gracias! Si deseas dejar un regalo, estás en el lugar correcto.
-          </p>
+        <div className="border-b border-silver-light bg-white px-4 py-8 text-center sm:px-6 sm:py-10">
+          <div className="mx-auto mb-4 flex h-10 w-10 items-center justify-center border border-silver text-silver-dark">+</div>
+          <p className="mb-2 font-display text-2xl italic text-charcoal">Tu RSVP ha sido recibido</p>
+          <p className="mx-auto max-w-xl text-sm text-muted">Gracias. Si deseas dejar un regalo, estas en el lugar correcto.</p>
         </div>
       )}
 
-      {/* Gift QR code */}
       {settings && <GiftQRCode settings={settings} />}
 
-      {/* Gift submission form */}
-      <section className="py-12 px-6 bg-white">
-        <div className="max-w-md mx-auto">
-          <div className="border-t border-silver-light pt-12">
+      <section className="bg-white px-4 py-12 sm:px-6">
+        <div className="mx-auto max-w-5xl">
+          <div className="border-t border-silver-light pt-10 sm:pt-12">
             <GiftSubmissionForm guestId={guestId} />
           </div>
         </div>

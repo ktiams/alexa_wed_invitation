@@ -34,70 +34,58 @@ export default async function GuestProfilePage({
 
   return (
     <div>
-      {/* Back */}
       <Link
         href="/admin/guests"
-        className="inline-flex items-center gap-2 text-xs uppercase tracking-widest font-sans text-muted hover:text-charcoal transition-colors mb-8"
+        className="mb-6 inline-flex items-center gap-2 text-xs uppercase tracking-widest text-muted transition-colors hover:text-charcoal sm:mb-8"
       >
         ← Volver a Invitados
       </Link>
 
-      {/* Header */}
-      <div className="flex items-start justify-between mb-8">
+      <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="font-display text-3xl font-light text-charcoal mb-1">
-            {guest.full_name}
-          </h1>
-          <p className="text-xs uppercase tracking-widest font-sans text-muted">
-            {new Date(guest.created_at).toLocaleString()}
-          </p>
+          <h1 className="mb-1 font-display text-3xl font-light text-charcoal">{guest.full_name}</h1>
+          <p className="text-xs uppercase tracking-widest text-muted">{new Date(guest.created_at).toLocaleString()}</p>
         </div>
         {guest.attendance_status === "attending" ? (
-          <Badge variant="success">Asistirá</Badge>
+          <Badge variant="success">Asistira</Badge>
         ) : guest.attendance_status === "not_attending" ? (
-          <Badge variant="danger">Declinó</Badge>
+          <Badge variant="danger">Declino</Badge>
         ) : (
           <Badge variant="muted">Pendiente</Badge>
         )}
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
-        {/* Contact details */}
+      <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardTitle>Contacto</CardTitle>
           <dl className="flex flex-col gap-3">
             {[
               { label: "Correo", value: guest.email },
-              { label: "Teléfono", value: guest.phone },
-              { label: "Acompañante", value: guest.has_plus_one ? guest.plus_one_name || "Sí" : "Ninguno" },
-              { label: "Solo Adultos", value: guest.adults_only_acknowledged ? "✓ Confirmado" : "✗ No confirmado" },
-              { label: "Vestimenta", value: guest.dress_code_acknowledged ? "✓ Confirmado" : "✗ No confirmado" },
+              { label: "Telefono", value: guest.phone },
+              { label: "Acompanante", value: guest.has_plus_one ? guest.plus_one_name || "Si" : "Ninguno" },
+              { label: "Solo Adultos", value: guest.adults_only_acknowledged ? "Confirmado" : "No confirmado" },
+              { label: "Vestimenta", value: guest.dress_code_acknowledged ? "Confirmado" : "No confirmado" },
             ].map(({ label, value }) => (
-              <div key={label} className="flex gap-4 text-sm font-sans">
-                <dt className="text-muted w-28 shrink-0">{label}</dt>
-                <dd className="text-charcoal">{value ?? "—"}</dd>
+              <div key={label} className="flex flex-col gap-1 text-sm sm:flex-row sm:gap-4">
+                <dt className="shrink-0 text-muted sm:w-32">{label}</dt>
+                <dd className="break-words text-charcoal">{value ?? "-"}</dd>
               </div>
             ))}
           </dl>
         </Card>
 
-        {/* Gifts */}
         <Card>
           <CardTitle>Regalos</CardTitle>
           {!guest.gift_transactions?.length ? (
-            <p className="text-xs font-sans text-muted">Sin regalos registrados.</p>
+            <p className="text-xs text-muted">Sin regalos registrados.</p>
           ) : (
             <div className="flex flex-col gap-3">
               {guest.gift_transactions.map((g) => (
-                <div key={g.id} className="flex items-center justify-between text-sm font-sans border-b border-silver-light pb-3 last:border-0 last:pb-0">
+                <div key={g.id} className="flex flex-col gap-3 border-b border-silver-light pb-3 last:border-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-charcoal font-medium">{g.method}</p>
-                    {g.reference_note && (
-                      <p className="text-xs text-muted mt-0.5">{g.reference_note}</p>
-                    )}
-                    {g.amount && (
-                      <p className="text-xs text-muted mt-0.5">${g.amount}</p>
-                    )}
+                    <p className="font-medium text-charcoal">{g.method}</p>
+                    {g.reference_note && <p className="mt-0.5 break-words text-xs text-muted">{g.reference_note}</p>}
+                    {g.amount && <p className="mt-0.5 text-xs text-muted">${g.amount}</p>}
                   </div>
                   <GiftStatusBadge status={g.status} />
                 </div>
@@ -106,23 +94,20 @@ export default async function GuestProfilePage({
           )}
         </Card>
 
-        {/* Messages */}
         <Card>
           <CardTitle>Mensajes</CardTitle>
           {!guest.guest_messages?.length ? (
-            <p className="text-xs font-sans text-muted">Sin mensajes.</p>
+            <p className="text-xs text-muted">Sin mensajes.</p>
           ) : (
             <div className="flex flex-col gap-4">
               {guest.guest_messages.map((m) => (
                 <div key={m.id}>
-                  <p className="text-sm font-sans text-charcoal leading-relaxed italic">
-                    &ldquo;{m.message}&rdquo;
-                  </p>
-                  <div className="flex items-center gap-3 mt-2">
+                  <p className="text-sm italic leading-relaxed text-charcoal">&ldquo;{m.message}&rdquo;</p>
+                  <div className="mt-2 flex flex-wrap items-center gap-3">
                     <Badge variant={m.is_approved ? "success" : "warning"}>
                       {m.is_approved ? "Aprobado" : "Pendiente"}
                     </Badge>
-                    {m.is_public && <Badge variant="success">Público</Badge>}
+                    {m.is_public && <Badge variant="success">Publico</Badge>}
                   </div>
                 </div>
               ))}
@@ -130,7 +115,6 @@ export default async function GuestProfilePage({
           )}
         </Card>
 
-        {/* Admin actions */}
         <GuestProfileActions guest={guest} />
       </div>
     </div>

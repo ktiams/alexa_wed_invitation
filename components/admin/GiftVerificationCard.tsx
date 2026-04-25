@@ -22,45 +22,27 @@ export function GiftVerificationCard({ gift }: GiftVerificationCardProps) {
   }
 
   return (
-    <div className="bg-white border border-silver-light p-6">
-      <div className="flex items-start justify-between gap-4 mb-4">
-        <div>
-          <p className="text-sm font-sans font-medium text-charcoal">
-            {gift.guest_name ?? "Invitado desconocido"} — {gift.method}
+    <div className="rounded-[1.5rem] border border-silver-light bg-white p-5 sm:p-6">
+      <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-charcoal">
+            {gift.guest_name ?? "Invitado desconocido"} - {gift.method}
           </p>
-          <p className="text-xs font-sans text-muted mt-0.5">
-            {new Date(gift.created_at).toLocaleString()}
-          </p>
-          {gift.reference_note && (
-            <p className="text-xs font-sans text-muted mt-1">Ref: {gift.reference_note}</p>
-          )}
+          <p className="mt-0.5 text-xs text-muted">{new Date(gift.created_at).toLocaleString()}</p>
+          {gift.reference_note && <p className="mt-1 break-words text-xs text-muted">Ref: {gift.reference_note}</p>}
         </div>
-        <div className="flex flex-col items-end gap-2 shrink-0">
+        <div className="flex items-center justify-between gap-3 sm:flex-col sm:items-end">
           <GiftStatusBadge status={gift.status} />
-          {gift.amount && (
-            <p className="text-sm font-sans font-medium text-charcoal">
-              ${gift.amount}
-            </p>
-          )}
+          {gift.amount && <p className="text-sm font-medium text-charcoal">${gift.amount}</p>}
         </div>
       </div>
 
       {gift.status === "pending" && (
-        <div className="flex gap-3">
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={handleVerify}
-            loading={isPending}
-          >
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <Button variant="primary" size="sm" onClick={handleVerify} loading={isPending} className="w-full sm:w-auto">
             Verificar
           </Button>
-          <Button
-            variant="danger"
-            size="sm"
-            onClick={handleReject}
-            loading={isPending}
-          >
+          <Button variant="danger" size="sm" onClick={handleReject} loading={isPending} className="w-full sm:w-auto">
             Rechazar
           </Button>
         </div>

@@ -22,44 +22,30 @@ export function MessageApprovalCard({ message }: MessageApprovalCardProps) {
   }
 
   return (
-    <div className="bg-white border border-silver-light p-6">
-      <div className="flex items-start justify-between gap-4 mb-4">
-        <div>
-          <p className="text-sm font-sans font-medium text-charcoal">{message.guest_name}</p>
-          <p className="text-xs font-sans text-muted mt-0.5">
-            {new Date(message.created_at).toLocaleString()}
-          </p>
+    <div className="rounded-[1.5rem] border border-silver-light bg-white p-5 sm:p-6">
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-charcoal">{message.guest_name}</p>
+          <p className="mt-0.5 text-xs text-muted">{new Date(message.created_at).toLocaleString()}</p>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2">
           <Badge variant={message.is_approved ? "success" : "warning"}>
             {message.is_approved ? "Aprobado" : "Pendiente"}
           </Badge>
-          {message.is_public && <Badge variant="success">Público</Badge>}
+          {message.is_public && <Badge variant="success">Publico</Badge>}
         </div>
       </div>
 
-      <p className="text-sm font-sans text-charcoal leading-relaxed italic mb-5">
-        &ldquo;{message.message}&rdquo;
-      </p>
+      <p className="mb-5 text-sm italic leading-relaxed text-charcoal">&ldquo;{message.message}&rdquo;</p>
 
-      <div className="flex gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row">
         {!message.is_approved && (
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={handleApprove}
-            loading={isPending}
-          >
+          <Button variant="primary" size="sm" onClick={handleApprove} loading={isPending} className="w-full sm:w-auto">
             Aprobar y Publicar
           </Button>
         )}
         {message.is_public && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleHide}
-            loading={isPending}
-          >
+          <Button variant="outline" size="sm" onClick={handleHide} loading={isPending} className="w-full sm:w-auto">
             Despublicar
           </Button>
         )}

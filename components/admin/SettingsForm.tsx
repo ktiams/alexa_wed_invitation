@@ -44,47 +44,42 @@ export function SettingsForm({ settings }: SettingsFormProps) {
   }
 
   return (
-    <div className="max-w-xl bg-white border border-silver-light p-8 flex flex-col gap-5">
-      <Input label="Nombre de la pareja" value={form.couple_name} onChange={set("couple_name")} />
-      <Input label="Nombre de la novia" value={form.bride_name} onChange={set("bride_name")} />
-      <Input label="Nombre del novio" value={form.groom_name} onChange={set("groom_name")} />
-
-      <div className="border-t border-silver-light pt-5 flex flex-col gap-5">
-        <Input label="Nombre del lugar" value={form.venue_name} onChange={set("venue_name")} />
-        <Input label="Ciudad" value={form.venue_city} onChange={set("venue_city")} />
-        <Input label="País" value={form.venue_country} onChange={set("venue_country")} />
+    <div className="premium-card w-full max-w-4xl px-5 py-6 sm:px-8 sm:py-8">
+      <div className="grid gap-5 md:grid-cols-2">
+        <Input label="Nombre de la pareja" value={form.couple_name} onChange={set("couple_name")} />
+        <Input label="Nombre de la novia" value={form.bride_name} onChange={set("bride_name")} />
+        <Input label="Nombre del novio" value={form.groom_name} onChange={set("groom_name")} />
       </div>
 
-      <div className="border-t border-silver-light pt-5 flex flex-col gap-5">
-        <Textarea
-          label="Código de Vestimenta"
-          value={form.dress_code}
-          onChange={set("dress_code")}
-          rows={2}
-        />
-        <Input
-          label="URL del código QR de regalo"
-          value={form.gift_qr_url}
-          onChange={set("gift_qr_url")}
-          placeholder="https://..."
-        />
-        <Textarea
-          label="Instrucciones de regalo"
-          value={form.gift_instructions}
-          onChange={set("gift_instructions")}
-          rows={3}
-          placeholder="Instrucciones para los invitados..."
-        />
+      <div className="mt-6 border-t border-silver-light pt-6">
+        <div className="grid gap-5 md:grid-cols-3">
+          <Input label="Nombre del lugar" value={form.venue_name} onChange={set("venue_name")} className="md:col-span-3" />
+          <Input label="Ciudad" value={form.venue_city} onChange={set("venue_city")} />
+          <Input label="Pais" value={form.venue_country} onChange={set("venue_country")} />
+        </div>
       </div>
 
-      <Button
-        variant="primary"
-        size="md"
-        onClick={handleSave}
-        loading={isPending}
-        className="self-start mt-2"
-      >
-        {saved ? "Guardado ✓" : "Guardar Configuración"}
+      <div className="mt-6 border-t border-silver-light pt-6">
+        <div className="grid gap-5">
+          <Textarea label="Codigo de Vestimenta" value={form.dress_code} onChange={set("dress_code")} rows={2} />
+          <Input
+            label="URL del codigo QR de regalo"
+            value={form.gift_qr_url}
+            onChange={set("gift_qr_url")}
+            placeholder="https://..."
+          />
+          <Textarea
+            label="Instrucciones de regalo"
+            value={form.gift_instructions}
+            onChange={set("gift_instructions")}
+            rows={3}
+            placeholder="Instrucciones para los invitados..."
+          />
+        </div>
+      </div>
+
+      <Button variant="primary" size="md" onClick={handleSave} loading={isPending} className="mt-6 w-full sm:w-auto">
+        {saved ? "Guardado" : "Guardar Configuracion"}
       </Button>
     </div>
   );
