@@ -35,14 +35,14 @@ export default async function HomePage() {
 
   if (!settings) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-cream">
-        <p className="font-display text-2xl italic text-muted">Próximamente</p>
+      <main className="flex min-h-screen items-center justify-center bg-cream">
+        <p className="font-display text-2xl italic text-muted">Proximamente</p>
       </main>
     );
   }
 
   return (
-    <main>
+    <main className="pb-8">
       <HeroSection />
       <CountdownTimer />
       <WeddingDetails settings={settings} />

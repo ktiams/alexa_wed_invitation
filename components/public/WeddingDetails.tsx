@@ -6,62 +6,52 @@ interface WeddingDetailsProps {
 
 export function WeddingDetails({ settings }: WeddingDetailsProps) {
   return (
-    <section className="py-20 px-6 bg-cream" id="details">
-      <div className="max-w-xl mx-auto">
-        {/* Section heading */}
-        <div className="text-center mb-14">
-          <p className="text-sm uppercase tracking-[0.2em] text-silver-dark font-sans mb-4">
-            Los Detalles
+    <section className="px-6 py-20" id="details">
+      <div className="mx-auto max-w-5xl">
+        <div className="mb-12 text-center">
+          <p className="text-[0.72rem] uppercase tracking-[0.38em] text-silver-dark">Los detalles</p>
+          <p className="mx-auto mt-5 max-w-2xl font-display text-3xl font-light leading-tight text-charcoal sm:text-4xl">
+            Una tarde de celebracion, naturaleza y elegancia serena
           </p>
-          <div className="h-px w-16 bg-silver mx-auto" />
         </div>
 
-        {/* Details grid */}
-        <div className="grid sm:grid-cols-3 gap-10 text-center">
-          {/* Date */}
-          <div>
-            <p className="text-sm uppercase tracking-wider text-silver-dark font-sans mb-3">
-              Fecha
-            </p>
-            <p className="font-display text-2xl font-light text-charcoal">
-              5 de diciembre
-            </p>
-            <p className="font-display text-lg font-light text-muted italic">
-              2026
-            </p>
+        <div className="grid gap-6 md:grid-cols-[1.2fr_0.8fr]">
+          <div className="premium-card px-8 py-10 sm:px-10">
+            <div className="grid gap-8 sm:grid-cols-2">
+              <div>
+                <p className="text-[0.68rem] uppercase tracking-[0.35em] text-silver-dark">Fecha</p>
+                <p className="mt-3 font-display text-4xl font-light text-charcoal">5 diciembre</p>
+                <p className="mt-1 text-sm uppercase tracking-[0.25em] text-muted">2026</p>
+              </div>
+              <div>
+                <p className="text-[0.68rem] uppercase tracking-[0.35em] text-silver-dark">Hora</p>
+                <p className="mt-3 font-display text-4xl font-light text-charcoal">4:00 PM</p>
+                <p className="mt-1 text-sm uppercase tracking-[0.18em] text-muted">Hora estandar del Atlantico</p>
+              </div>
+            </div>
+
+            <div className="mt-8 border-t border-silver-light/80 pt-8">
+              <p className="text-[0.68rem] uppercase tracking-[0.35em] text-silver-dark">Lugar</p>
+              <p className="mt-3 font-display text-4xl font-light text-charcoal sm:text-5xl">{settings.venue_name}</p>
+              <p className="mt-2 max-w-xl text-base leading-relaxed text-muted">
+                {settings.venue_city}, {settings.venue_country}
+              </p>
+            </div>
           </div>
 
-          {/* Column divider */}
-          <div className="hidden sm:flex flex-col items-center justify-center">
-            <div className="h-16 w-px bg-silver-light" />
+          <div className="premium-card flex flex-col justify-between px-8 py-10">
+            <div>
+              <p className="text-[0.68rem] uppercase tracking-[0.35em] text-silver-dark">Ambiente</p>
+              <p className="mt-4 font-display text-3xl font-light leading-tight text-charcoal">
+                Jardines, luz dorada y una cena bajo el cielo
+              </p>
+            </div>
+            <div className="mt-8 border-t border-silver-light/80 pt-6">
+              <p className="text-sm leading-relaxed text-muted">
+                Queremos que cada rincón se sienta cálido, refinado y memorable desde el primer vistazo.
+              </p>
+            </div>
           </div>
-          <div className="sm:hidden h-px w-full bg-silver-light" />
-
-          {/* Time */}
-          <div className="sm:col-start-3">
-            <p className="text-sm uppercase tracking-wider text-silver-dark font-sans mb-3">
-              Hora
-            </p>
-            <p className="font-display text-2xl font-light text-charcoal">
-              4:00 PM
-            </p>
-            <p className="font-display text-lg font-light text-muted italic">
-              Hora Estándar del Atlántico
-            </p>
-          </div>
-        </div>
-
-        {/* Venue */}
-        <div className="mt-14 text-center border-t border-silver-light pt-14">
-          <p className="text-sm uppercase tracking-wider text-silver-dark font-sans mb-4">
-            Lugar
-          </p>
-          <p className="font-display text-3xl sm:text-4xl font-light text-charcoal mb-2">
-            {settings.venue_name}
-          </p>
-          <p className="text-sm font-sans text-muted">
-            {settings.venue_city}, {settings.venue_country}
-          </p>
         </div>
       </div>
     </section>
