@@ -1,42 +1,22 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Inter } from "next/font/google";
+import { headers } from "next/headers";
 import "./globals.css";
 
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  style: ["normal", "italic"],
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const requestHeaders = await headers();
+  const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost:3000";
+  const protocol = requestHeaders.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
+  const image = `${protocol}://${host}/og.png`;
+  const title = "Anthony & Alexandra | 5 de diciembre de 2026";
+  const description = "Acompáñanos a celebrar la boda de Anthony Ugarte y Alexandra Vargas en Finca Amada, San Sebastián.";
+  return {
+    title,
+    description,
+    openGraph: { title, description, images: [{ url: image, width: 1733, height: 908, alt: "Invitación de boda de Anthony y Alexandra" }] },
+    twitter: { card: "summary_large_image", title, description, images: [image] },
+  };
+}
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-});
-
-export const metadata: Metadata = {
-  title: "Anthony & Alexandra — December 5, 2026",
-  description:
-    "You are cordially invited to celebrate the wedding of Anthony Ugarte & Alexandra Vargas. December 5, 2026 · Finca Amada, San Sebastián, Puerto Rico.",
-  openGraph: {
-    title: "Anthony & Alexandra — December 5, 2026",
-    description:
-      "You are cordially invited to celebrate our wedding. December 5, 2026 · Finca Amada, San Sebastián, Puerto Rico.",
-    type: "website",
-  },
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html lang="en" className={`${cormorant.variable} ${inter.variable} h-full`}>
-      <body className="min-h-full bg-cream text-charcoal antialiased">
-        {children}
-      </body>
-    </html>
-  );
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  return <html lang="es"><body>{children}</body></html>;
 }
