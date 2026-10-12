@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
+import { VENUE_LINE } from "@/lib/venue";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -18,11 +19,11 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Anthony & Alexandra — December 5, 2026",
   description:
-    "You are cordially invited to celebrate the wedding of Anthony Ugarte & Alexandra Vargas. December 5, 2026 · Finca Amada, San Sebastián, Puerto Rico.",
+    `You are cordially invited to celebrate the wedding of Anthony Ugarte & Alexandra Vargas. December 5, 2026 · ${VENUE_LINE}.`,
   openGraph: {
     title: "Anthony & Alexandra — December 5, 2026",
     description:
-      "You are cordially invited to celebrate our wedding. December 5, 2026 · Finca Amada, San Sebastián, Puerto Rico.",
+      `You are cordially invited to celebrate our wedding. December 5, 2026 · ${VENUE_LINE}.`,
     type: "website",
   },
 };

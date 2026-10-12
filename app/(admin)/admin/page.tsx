@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import { VENUE } from "@/lib/venue";
 import { DashboardStatsGrid } from "@/components/admin/DashboardStats";
 import type { DashboardStats } from "@/lib/types/database";
 
@@ -54,7 +55,7 @@ export default async function AdminDashboardPage() {
           Panel Principal
         </h1>
         <p className="text-sm uppercase tracking-wider font-sans text-muted">
-          5 de diciembre, 2026 · Finca Amada
+          5 de diciembre, 2026 · {VENUE.name}
         </p>
       </div>
 
