@@ -146,3 +146,240 @@ main {
     animation-duration: 0ms !important;
   }
 }
+
+/* ─── LOVE STORY (galería tipo túnel) ─────────────────────────────────────── */
+.love-story {
+  --tunnel-speed: 24s;
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: #1f1a17;
+  color: #fffdf8;
+  text-align: center;
+}
+
+.love-story.is-accelerated {
+  --tunnel-speed: 6s;
+}
+
+.love-story__stage,
+.love-story__scene,
+.love-story__veil {
+  position: absolute;
+  inset: 0;
+}
+
+.love-story__stage {
+  z-index: 0;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.love-story__stage:active {
+  cursor: grabbing;
+}
+
+.love-story__scene {
+  perspective: 900px;
+  perspective-origin: 50% 50%;
+  transform-style: preserve-3d;
+}
+
+.love-story__card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(150px, 23vw, 330px);
+  aspect-ratio: 4 / 5;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 253, 248, 0.28);
+  box-shadow: 0 28px 80px rgba(10, 6, 4, 0.5);
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  animation: love-story-rush var(--tunnel-speed) linear infinite;
+  animation-delay: var(--delay);
+  backface-visibility: hidden;
+  transition: none;
+}
+
+.love-story__card img {
+  object-fit: cover;
+  filter: saturate(0.8) sepia(0.08) contrast(1.04);
+}
+
+@keyframes love-story-rush {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translate3d(var(--lane-x), var(--lane-y), -1900px) rotate(var(--tilt)) scale(0.6);
+  }
+  8% {
+    opacity: 0.25;
+  }
+  56% {
+    opacity: 0.95;
+  }
+  88% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translate3d(var(--lane-x), var(--lane-y), 420px) rotate(var(--tilt)) scale(1.05);
+  }
+}
+
+.love-story__veil {
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(31, 26, 23, 0.92) 0, rgba(31, 26, 23, 0.72) 18%, rgba(31, 26, 23, 0.22) 38%, rgba(18, 14, 12, 0.46) 100%),
+    linear-gradient(180deg, rgba(18, 14, 12, 0.64), transparent 24%, transparent 74%, rgba(18, 14, 12, 0.82));
+}
+
+.love-story__copy {
+  position: relative;
+  z-index: 2;
+  width: min(820px, 90vw);
+  padding: 100px 20px;
+}
+
+.love-story__copy h2 {
+  margin: 0;
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(58px, 8vw, 116px);
+  line-height: 0.82;
+  letter-spacing: -0.045em;
+  text-shadow: 0 3px 30px rgba(10, 6, 4, 0.4);
+}
+
+.love-story__copy h2 em {
+  font-weight: 300;
+  font-style: italic;
+}
+
+.love-story__intro {
+  width: min(530px, 100%);
+  margin: 36px auto 0;
+  color: #efe4d3;
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-size: 17px;
+  line-height: 1.85;
+  text-wrap: balance;
+}
+
+.love-story__signature {
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-style: italic;
+  font-size: 19px;
+  line-height: 1;
+}
+
+.love-story__signature i {
+  color: #b99b6b;
+  font-size: 24px;
+}
+
+.love-story__control {
+  position: absolute;
+  z-index: 3;
+  right: 4vw;
+  bottom: 42px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #fffdf8;
+  font-family: var(--font-inter), sans-serif;
+  font-weight: 600;
+  font-size: 0.62rem;
+  line-height: 1;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.love-story__control > span {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 253, 248, 0.5);
+  border-radius: 50%;
+  font-size: 13px;
+  transition: background 0.25s, color 0.25s;
+}
+
+.love-story__control:hover > span,
+.love-story__control:focus-visible > span,
+.love-story__control[aria-pressed="true"] > span {
+  background: #fffdf8;
+  color: #1f1a17;
+}
+
+.love-story__control:focus-visible {
+  outline: 1px solid #fffdf8;
+  outline-offset: 8px;
+}
+
+.love-story__hint {
+  position: absolute;
+  z-index: 3;
+  left: 4vw;
+  bottom: 50px;
+  margin: 0;
+  color: rgba(255, 253, 248, 0.62);
+  font-family: var(--font-inter), sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 800px) {
+  .love-story { min-height: 920px; }
+  .love-story__scene { perspective: 760px; }
+  .love-story__card { width: clamp(145px, 38vw, 250px); }
+  .love-story__copy { padding: 120px 14px; }
+  .love-story__copy h2 { font-size: clamp(57px, 15vw, 88px); line-height: 0.84; }
+  .love-story__intro { max-width: 430px; font-size: 15px; }
+  .love-story__control { right: 24px; bottom: 30px; }
+  .love-story__hint { left: 24px; bottom: 38px; max-width: 180px; line-height: 1.5; }
+}
+
+@media (max-width: 520px) {
+  .love-story { min-height: 820px; }
+  .love-story__scene { perspective: 650px; }
+  .love-story__card { width: 44vw; }
+  .love-story__veil {
+    background: radial-gradient(circle at 50% 46%, rgba(31, 26, 23, 0.94) 0, rgba(31, 26, 23, 0.74) 26%, rgba(22, 17, 14, 0.38) 53%, rgba(14, 10, 8, 0.74) 100%);
+  }
+  .love-story__copy { width: 94vw; padding: 100px 14px 145px; }
+  .love-story__copy h2 { font-size: clamp(51px, 15vw, 72px); }
+  .love-story__intro { margin-top: 28px; font-size: 14px; line-height: 1.75; }
+  .love-story__signature { margin-top: 24px; font-size: 16px; }
+  .love-story__control { right: 20px; bottom: 30px; font-size: 0; }
+  .love-story__control > span { font-size: 12px; }
+  .love-story__hint { left: 20px; bottom: 38px; max-width: 180px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .love-story__card {
+    animation: none;
+    opacity: 0.42;
+    transform: translate(-50%, -50%) translate3d(var(--lane-x), var(--lane-y), -300px) rotate(var(--tilt));
+  }
+  .love-story__card:nth-child(n + 7) { display: none; }
+  .love-story__control,
+  .love-story__hint { display: none; }
+}

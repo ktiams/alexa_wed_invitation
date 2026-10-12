@@ -11,7 +11,7 @@
 | Pareja | Anthony Ugarte & Alexandra Vargas |
 | Fecha | 5 de diciembre, 2026 |
 | Hora | 4:00 PM (Hora Estándar del Atlántico, UTC-4) |
-| Lugar | Finca Amada, San Sebastián, Puerto Rico |
+| Lugar | Hacienda El Mabú, Barrio Pozas, San Sebastián, Puerto Rico (00586). Datos y enlaces de Maps en `lib/venue.ts` |
 | Código de vestimenta | Blanco, casual elegante. Sin brillantina, sin glitter, sin brillo. |
 | Tipo de evento | Solo adultos. Cada invitación permite al invitado y un acompañante. |
 
@@ -166,7 +166,7 @@ Incluye: creación de tablas, triggers, RLS policies, seed de `wedding_settings`
 Archivo: `.env.local` (no commitear)
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://ldyhqalsbjlqkttnxcwq.supabase.co
+NEXT_PUBLIC_SUPABASE_URL=https://pjyaqjjpmjesjwbbmifz.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
 SUPABASE_SERVICE_ROLE_KEY=eyJ...
 ```
@@ -220,8 +220,9 @@ Todos los labels de sección y UI usan `text-sm uppercase tracking-wider text-si
 
 | Componente | Sección | Descripción |
 |---|---|---|
-| `HeroSection` | `/` | Nombres, fecha, venue. Bordes decorativos. |
+| `HeroSection` | `/` | Foto de la pareja (`public/images/hero.jpeg`) completa con `object-contain` sobre un fondo difuminado de la misma foto, nunca recortada. Escritorio: texto en franja inferior. Móvil: foto arriba y texto debajo. |
 | `CountdownTimer` | `/` | Cuenta regresiva en tiempo real (client). Días/Horas/Minutos/Segundos. |
+| `LoveStorySection` | `#historia` | Galería "Love Story": túnel 3D con 16 fotos en `public/images/love-story/` (client). Mantener presionado o el botón acelera; `prefers-reduced-motion` la deja estática. |
 | `WeddingDetails` | `#details` | Fecha, hora, lugar en grid de 3 columnas. |
 | `DressCodeCard` | `#dress-code` | Blanco/marfil ✓ — brillantina/glitter/brillo ✕ |
 | `AdultsOnlyNotice` | `#adults-only` | Aviso 18+ con ícono. |
@@ -330,8 +331,9 @@ Usa Zod v4. Diferencias críticas vs Zod v3:
 ## Pendiente / Ideas futuras
 
 - [ ] Subir QR code real a Supabase Storage y actualizar `gift_qr_url` desde settings
-- [ ] Agregar mapa real de Finca Amada en `VenueSection` (Google Maps embed o Mapbox)
+- [ ] Agregar mapa embebido de Hacienda El Mabú en `VenueSection` (hoy hay enlaces a ficha y ruta de Google Maps)
 - [ ] Confirmación por email al invitado tras RSVP (Supabase Edge Function + Resend)
 - [ ] Paginación en la tabla de invitados (cuando supere ~100 registros)
 - [ ] Export detallado de regalos en CSV separado
 - [ ] Screenshot upload para comprobante de regalo (`screenshot_url` ya existe en el schema)
+- [ ] Aprobar con la novia la selección y el orden de las 16 fotos de la galería Love Story

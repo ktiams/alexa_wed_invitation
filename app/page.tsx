@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { HeroSection } from "@/components/public/HeroSection";
 import { CountdownTimer } from "@/components/public/CountdownTimer";
+import { LoveStorySection } from "@/components/public/LoveStorySection";
 import { WeddingDetails } from "@/components/public/WeddingDetails";
 import { DressCodeCard } from "@/components/public/DressCodeCard";
 import { AdultsOnlyNotice } from "@/components/public/AdultsOnlyNotice";
@@ -44,6 +45,7 @@ export default async function HomePage() {
   return (
     <main className="pb-8">
       <HeroSection />
+      <LoveStorySection />
       <CountdownTimer />
       <WeddingDetails settings={settings} />
       <DressCodeCard />
