@@ -330,6 +330,8 @@ Usa Zod v4. Diferencias críticas vs Zod v3:
 
 ## Pendiente / Ideas futuras
 
+- [ ] Configurar las variables de Supabase en Vercel (`ktiams-projects/alexa-wed-invitation`) y redesplegar: producción muestra "Proximamente"
+- [ ] Crear el usuario admin de Alexa en Supabase Auth y probar `/admin`
 - [ ] Subir QR code real a Supabase Storage y actualizar `gift_qr_url` desde settings
 - [ ] Agregar mapa embebido de Hacienda El Mabú en `VenueSection` (hoy hay enlaces a ficha y ruta de Google Maps)
 - [ ] Confirmación por email al invitado tras RSVP (Supabase Edge Function + Resend)
