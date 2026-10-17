@@ -8,26 +8,35 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Solo para IntelliSense: los valores reales están en app/globals.css (@theme inline)
         // Backgrounds
-        cream: "#f7f1e8",
-        card: "#fffdf8",
-        parchment: "#efe4d3",
+        cream: "#faf5ef",
+        card: "#fffdf9",
+        parchment: "#f1e5d5",
         // Decorative / borders
         silver: {
-          DEFAULT: "#b99b6b",
-          light: "#d8c9b8",
-          dark: "#7a6a5b",
+          DEFAULT: "#c49a4e",
+          light: "#e6d7c6",
+          dark: "#6f5c50",
         },
         // Typography
-        charcoal: "#2a2521",
-        espresso: "#1f1a17",
-        muted: "#7a6a5b",
-        taupe: "#9a8a7a",
+        charcoal: "#4a3830",
+        espresso: "#4a3830",
+        muted: "#6f5c50",
+        taupe: "#9c8a7d",
         // Gold accent
         gold: {
-          DEFAULT: "#b99b6b",
-          dark: "#a98d61",
+          DEFAULT: "#c49a4e",
+          dark: "#8a6a2f",
         },
+        // Paleta nude
+        ivory: "#faf5ef",
+        beige: "#d8c3a6",
+        nude: { DEFAULT: "#ebcfc3", light: "#f6e6de" },
+        champagne: { DEFAULT: "#e2cdb2", light: "#f1e5d5" },
+        blush: "#e2ada5",
+        cacao: { DEFAULT: "#4a3830", deep: "#3a2b24" },
+        night: "#1f1a17",
       },
       fontFamily: {
         display: ["var(--font-cormorant)", "Georgia", "serif"],

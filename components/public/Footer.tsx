@@ -1,15 +1,16 @@
-import { VENUE } from "@/lib/venue";
+import { EVENT } from "@/lib/event";
 
 export function Footer() {
   return (
-    <footer className="px-6 py-16">
-      <div className="mx-auto max-w-4xl text-center">
-        <div className="premium-card px-8 py-10 sm:px-12">
-          <p className="font-display text-3xl font-light italic text-charcoal sm:text-4xl">Anthony &amp; Alexandra</p>
-          <div className="mx-auto mt-5 h-px w-24 bg-gradient-to-r from-transparent via-silver to-transparent" />
-          <p className="mt-5 text-[0.72rem] uppercase tracking-[0.32em] text-silver-dark">5 de diciembre, 2026</p>
-          <p className="mt-4 text-sm uppercase tracking-[0.22em] text-muted">{VENUE.name} · {VENUE.city}, {VENUE.country}</p>
+    <footer className="bg-parchment px-6 py-14 text-center">
+      <div className="mx-auto flex max-w-md flex-col items-center gap-4">
+        <div className="flex items-center gap-3" aria-hidden="true">
+          <span className="h-px w-12 bg-gradient-to-r from-transparent via-gold to-transparent" />
+          <span className="h-1.5 w-1.5 rounded-full bg-gold" />
+          <span className="h-px w-12 bg-gradient-to-r from-transparent via-gold to-transparent" />
         </div>
+        <p className="font-display text-4xl font-light italic text-charcoal">Anthony &amp; Alexandra</p>
+        <p className="text-xs uppercase tracking-[0.3em] text-gold-dark">{EVENT.dateShort}</p>
       </div>
     </footer>
   );

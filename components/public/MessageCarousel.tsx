@@ -25,7 +25,7 @@ export function MessageCarousel({ messages }: MessageCarouselProps) {
         <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-10 bg-gradient-to-r from-card to-transparent sm:w-20" />
         <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-10 bg-gradient-to-l from-card to-transparent sm:w-20" />
 
-        <div ref={trackRef} className="flex w-max gap-4 animate-slide-left sm:gap-5" aria-label="Guest wishes">
+        <div ref={trackRef} className="flex w-max gap-4 animate-slide-left sm:gap-5" aria-label="Deseos de los invitados">
           {doubled.map((msg, i) => (
             <MessageCard key={`${msg.id}-${i}`} message={msg} />
           ))}

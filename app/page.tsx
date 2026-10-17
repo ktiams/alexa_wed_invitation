@@ -1,15 +1,13 @@
 import { createClient } from "@/lib/supabase/server";
 import { HeroSection } from "@/components/public/HeroSection";
-import { CountdownTimer } from "@/components/public/CountdownTimer";
 import { LoveStorySection } from "@/components/public/LoveStorySection";
-import { WeddingDetails } from "@/components/public/WeddingDetails";
-import { DressCodeCard } from "@/components/public/DressCodeCard";
-import { AdultsOnlyNotice } from "@/components/public/AdultsOnlyNotice";
-import { VenueSection } from "@/components/public/VenueSection";
+import { EventDetails } from "@/components/public/EventDetails";
+import { GuestGuidelines } from "@/components/public/GuestGuidelines";
 import { RSVPForm } from "@/components/public/RSVPForm";
-import { GiftQRCode } from "@/components/public/GiftQRCode";
+import { GiftSection } from "@/components/public/GiftSection";
 import { MessageCarousel } from "@/components/public/MessageCarousel";
 import { Footer } from "@/components/public/Footer";
+import { StickyRSVPBar } from "@/components/public/StickyRSVPBar";
 import type { WeddingSettings, GuestMessage } from "@/lib/types/database";
 
 async function getPageData() {
@@ -37,24 +35,22 @@ export default async function HomePage() {
   if (!settings) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-cream">
-        <p className="font-display text-2xl italic text-muted">Proximamente</p>
+        <p className="font-display text-2xl italic text-muted">Próximamente</p>
       </main>
     );
   }
 
   return (
-    <main className="pb-8">
+    <main className="pb-24 lg:pb-0">
       <HeroSection />
       <LoveStorySection />
-      <CountdownTimer />
-      <WeddingDetails settings={settings} />
-      <DressCodeCard />
-      <AdultsOnlyNotice />
-      <VenueSection />
+      <EventDetails />
+      <GuestGuidelines />
       <RSVPForm />
-      <GiftQRCode settings={settings} />
+      <GiftSection />
       {messages.length > 0 && <MessageCarousel messages={messages} />}
       <Footer />
+      <StickyRSVPBar />
     </main>
   );
 }

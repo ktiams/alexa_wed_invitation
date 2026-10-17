@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
     // watcher dejaba de recompilar el CSS (carpeta oculta).
     root: path.resolve(process.cwd()),
   },
+  // Solo desarrollo: permite abrir `next dev` desde el celular por la IP de Tailscale
+  // de la laptop. Sin esto Next 16 bloquea sus scripts y la página no se vuelve
+  // interactiva (ni destellos, ni cuenta regresiva, ni barra fija).
+  allowedDevOrigins: ["100.122.160.5"],
 };
 
 export default nextConfig;

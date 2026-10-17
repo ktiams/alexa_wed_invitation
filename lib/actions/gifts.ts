@@ -17,12 +17,12 @@ export async function submitGift(
   const reference_note = formData.get("reference_note") as string | null;
 
   if (!method) {
-    return { success: false, error: "Payment method is required." };
+    return { success: false, error: "Elige el método de pago." };
   }
 
   const amount = amount_raw ? parseFloat(amount_raw) : null;
   if (amount !== null && isNaN(amount)) {
-    return { success: false, error: "Please enter a valid amount." };
+    return { success: false, error: "Escribe una cantidad válida." };
   }
 
   const supabase = await createClient();
@@ -36,7 +36,7 @@ export async function submitGift(
   });
 
   if (error) {
-    return { success: false, error: "Failed to record your gift. Please try again." };
+    return { success: false, error: "No pudimos guardar el aviso. Inténtalo de nuevo en un momento." };
   }
 
   return { success: true };

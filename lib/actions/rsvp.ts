@@ -38,30 +38,33 @@ export async function submitRSVP(
   }
 
   const data = parsed.data;
+  const attending = data.attendance_status === "attending";
+  const withPlusOne = attending && data.has_plus_one;
   const supabase = await createClient();
 
-  const { data: guest, error: guestError } = await supabase
-    .from("guests")
-    .insert({
-      full_name: data.full_name,
-      phone: data.phone,
-      email: data.email,
-      attendance_status: data.attendance_status,
-      has_plus_one: data.has_plus_one,
-      plus_one_name: data.has_plus_one ? data.plus_one_name || null : null,
-      adults_only_acknowledged: data.adults_only_acknowledged,
-      dress_code_acknowledged: data.dress_code_acknowledged,
-    })
-    .select("id")
-    .single();
+  // El id se genera aquí: RLS solo permite INSERT a los invitados (no SELECT),
+  // así que no podemos pedir la fila de vuelta con .select().
+  const guestId = crypto.randomUUID();
 
-  if (guestError || !guest) {
-    return { success: false, error: "Failed to save your RSVP. Please try again." };
+  const { error: guestError } = await supabase.from("guests").insert({
+    id: guestId,
+    full_name: data.full_name,
+    phone: data.phone,
+    email: data.email,
+    attendance_status: data.attendance_status,
+    has_plus_one: withPlusOne,
+    plus_one_name: withPlusOne ? data.plus_one_name : null,
+    adults_only_acknowledged: attending && data.adults_only_acknowledged,
+    dress_code_acknowledged: attending && data.dress_code_acknowledged,
+  });
+
+  if (guestError) {
+    return { success: false, error: "No pudimos guardar tu respuesta. Inténtalo de nuevo en un momento." };
   }
 
   if (data.message?.trim()) {
     await supabase.from("guest_messages").insert({
-      guest_id: guest.id,
+      guest_id: guestId,
       guest_name: data.full_name,
       message: data.message.trim(),
       is_approved: false,
@@ -69,5 +72,5 @@ export async function submitRSVP(
     });
   }
 
-  return { success: true, guestId: guest.id };
+  return { success: true, guestId };
 }

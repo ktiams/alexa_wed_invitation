@@ -10,7 +10,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses = {
   primary:
-    "bg-espresso text-[#fff8ee] hover:bg-[#3a312a] border border-espresso",
+    "bg-espresso text-ivory hover:bg-cacao-deep border border-espresso",
   outline:
     "bg-transparent text-charcoal border border-silver-light hover:border-charcoal hover:text-espresso",
   ghost:
@@ -20,9 +20,9 @@ const variantClasses = {
 };
 
 const sizeClasses = {
-  sm: "px-4 py-2 text-xs tracking-widest",
-  md: "px-6 py-3 text-xs tracking-widest",
-  lg: "px-8 py-4 text-xs tracking-[0.15em]",
+  sm: "rounded-full px-4 py-2 text-xs tracking-widest",
+  md: "rounded-full px-6 py-3 text-xs tracking-widest",
+  lg: "rounded-full min-h-[3.25rem] px-8 py-4 text-[0.8rem] tracking-[0.14em]",
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -43,7 +43,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || loading}
         className={[
-          "inline-flex items-center justify-center gap-2 uppercase font-sans font-medium",
+          "inline-flex items-center justify-center gap-2 uppercase font-body font-semibold",
           "transition-all duration-200 cursor-pointer",
           "disabled:opacity-50 disabled:cursor-not-allowed",
           variantClasses[variant],

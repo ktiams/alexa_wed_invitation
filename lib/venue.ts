@@ -14,6 +14,10 @@ export const VENUE = {
   /** Ruta en Google Maps directo al pin del lugar. */
   directionsUrl:
     "https://www.google.com/maps/dir/?api=1&destination=18.3229211,-67.0164977&travelmode=driving",
-} as const;
+  /** Ruta en Waze al mismo punto. */
+  wazeUrl: "https://waze.com/ul?ll=18.3229211,-67.0164977&navigate=yes",
+  /** Foto del lugar para "Cuándo y dónde". null hasta tener el archivo en public/images/venue/. */
+  photo: null as { src: string; width: number; height: number } | null,
+};
 
 export const VENUE_LINE = `${VENUE.name}, ${VENUE.city}, ${VENUE.country}`;

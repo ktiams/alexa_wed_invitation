@@ -1,60 +1,32 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { WEDDING_DATE, getCountdown } from "@/lib/utils/date";
+import { useCountdown } from "@/lib/hooks/useCountdown";
 
+// Cuenta regresiva compacta, en una fila, para "Cuándo y dónde".
 export function CountdownTimer() {
-  const [countdown, setCountdown] = useState(getCountdown(WEDDING_DATE));
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCountdown(getCountdown(WEDDING_DATE));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
+  const countdown = useCountdown();
 
   if (countdown.isPast) {
-    return (
-      <section className="px-6 py-20">
-        <div className="premium-card mx-auto max-w-3xl px-8 py-12 text-center">
-          <p className="font-display text-3xl italic text-charcoal sm:text-4xl">Hoy es el dia</p>
-        </div>
-      </section>
-    );
+    return <p className="text-center font-display text-3xl italic text-charcoal">¡Hoy es el día!</p>;
   }
 
   const units = [
-    { label: "Dias", value: countdown.days },
-    { label: "Horas", value: countdown.hours },
-    { label: "Minutos", value: countdown.minutes },
-    { label: "Segundos", value: countdown.seconds },
+    { label: "días", value: countdown.days },
+    { label: "horas", value: countdown.hours },
+    { label: "min", value: countdown.minutes },
+    { label: "seg", value: countdown.seconds },
   ];
 
   return (
-    <section className="px-6 py-20">
-      <div className="premium-card mx-auto max-w-5xl px-8 py-10 sm:px-12 sm:py-14">
-        <div className="mb-10 text-center">
-          <p className="text-[0.72rem] uppercase tracking-[0.38em] text-silver-dark">La cuenta regresiva</p>
-          <div className="mx-auto mt-4 h-px w-20 bg-gradient-to-r from-transparent via-silver to-transparent" />
+    <div className="grid grid-cols-4 gap-2 sm:gap-3" aria-label="Cuenta regresiva para la boda">
+      {units.map(({ label, value }) => (
+        <div key={label} className="soft-card px-1 py-3 text-center sm:py-4">
+          <span suppressHydrationWarning className="block font-display text-3xl leading-none tabular-nums text-charcoal sm:text-4xl">
+            {String(value).padStart(2, "0")}
+          </span>
+          <span className="mt-1.5 block text-xs text-muted">{label}</span>
         </div>
-
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6">
-          {units.map(({ label, value }) => (
-            <div
-              key={label}
-              className="rounded-[1.75rem] border border-silver-light/70 bg-white/35 px-4 py-6 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] backdrop-blur-sm"
-            >
-              <span
-                suppressHydrationWarning
-                className="block font-display text-5xl font-light leading-none text-charcoal sm:text-6xl"
-              >
-                {String(value).padStart(2, "0")}
-              </span>
-              <span className="mt-3 block text-[0.68rem] uppercase tracking-[0.3em] text-silver-dark">{label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
+      ))}
+    </div>
   );
 }

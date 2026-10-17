@@ -9,7 +9,7 @@ const navItems = [
   { href: "/admin/guests", label: "Invitados" },
   { href: "/admin/messages", label: "Mensajes" },
   { href: "/admin/gifts", label: "Regalos" },
-  { href: "/admin/settings", label: "Configuracion" },
+  { href: "/admin/settings", label: "Configuración" },
 ];
 
 export function AdminSidebar() {
@@ -24,7 +24,7 @@ export function AdminSidebar() {
   }
 
   return (
-    <aside className="border-b border-silver-light bg-white md:min-h-screen md:w-64 md:shrink-0 md:border-b-0 md:border-r">
+    <aside className="border-b border-silver-light bg-card md:min-h-screen md:w-64 md:shrink-0 md:border-b-0 md:border-r">
       <div className="flex items-center justify-between gap-4 border-b border-silver-light px-4 py-4 sm:px-6 md:block md:px-6 md:py-8">
         <div>
           <p className="font-display text-xl font-light italic leading-tight text-charcoal">A &amp; A</p>
@@ -49,7 +49,7 @@ export function AdminSidebar() {
                   href={item.href}
                   className={[
                     "flex items-center rounded-full px-4 py-2.5 text-[0.68rem] uppercase tracking-[0.24em] transition-colors md:rounded-none md:px-3",
-                    isActive ? "bg-charcoal text-white" : "bg-cream/40 text-muted hover:bg-cream hover:text-charcoal",
+                    isActive ? "bg-charcoal text-ivory" : "bg-cream/40 text-muted hover:bg-nude-light hover:text-charcoal",
                   ].join(" ")}
                 >
                   {item.label}
@@ -65,7 +65,7 @@ export function AdminSidebar() {
           onClick={handleSignOut}
           className="w-full px-3 py-2 text-left text-xs uppercase tracking-widest text-muted transition-colors hover:text-charcoal"
         >
-          Cerrar Sesion
+          Cerrar sesión
         </button>
       </div>
     </aside>

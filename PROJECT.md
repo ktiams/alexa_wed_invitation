@@ -12,7 +12,7 @@
 | Fecha | 5 de diciembre, 2026 |
 | Hora | 4:00 PM (Hora Estándar del Atlántico, UTC-4) |
 | Lugar | Hacienda El Mabú, Barrio Pozas, San Sebastián, Puerto Rico (00586). Datos y enlaces de Maps en `lib/venue.ts` |
-| Código de vestimenta | Blanco, casual elegante. Sin brillantina, sin glitter, sin brillo. |
+| Código de vestimenta | Casual elegante. **Solamente blanco, crema o rosa**: ningún otro color y nada de brillos (cambio del 17 oct 2026; antes era solo blanco). Referencia visual oficial en `public/images/dress-code/` (ver "Imágenes del código de vestimenta"). |
 | Tipo de evento | Solo adultos. Cada invitación permite al invitado y un acompañante. |
 
 ---
@@ -175,23 +175,33 @@ SUPABASE_SERVICE_ROLE_KEY=eyJ...
 
 ## Sistema de diseño
 
-### Paleta warm luxury
+### Paleta "boda nude elegante" (desde el 17 oct 2026)
 
-| Token | Hex | Uso |
-|---|---|---|
-| `cream` | `#f7f1e8` | Fondo principal de página |
-| `card` | `#fffdf8` | Superficie de cards y formularios |
-| `parchment` | `#efe4d3` | Secciones alternas (RSVP, adults-only) |
-| `silver` / `gold` | `#b99b6b` | Champagne — divisores, ornamentos |
-| `silver-light` | `#d8c9b8` | Bordes de cards, inputs, separadores |
-| `silver-dark` | `#7a6a5b` | Labels, metadata |
-| `charcoal` | `#2a2521` | Texto primario, headings |
-| `espresso` | `#1f1a17` | Botones primary, acentos fuertes |
-| `muted` | `#7a6a5b` | Texto secundario, body |
-| `taupe` | `#9a8a7a` | Placeholder de inputs |
-| `gold-dark` | `#a98d61` | Focus ring, hover states |
+Sale de dos moodboards de la novia (ivory, beige, nude rosado, champán y dorado) más dos tonos de apoyo: cacao para textos y botones, y taupe para texto secundario. Se aplica a la invitación y al panel. Propuesta aprobada: https://claude.ai/artifact/TFMdLGmxxn6H6XFvJdMTNi
 
-Tokens definidos en `app/globals.css` via `@theme inline {}`. Duplicados en `tailwind.config.ts` para IntelliSense del IDE.
+Los nombres viejos de los tokens se conservaron para no tocar cada componente; cambió su valor:
+
+| Token | Hex | Nombre en la paleta | Uso |
+|---|---|---|---|
+| `cream` / `ivory` | `#faf5ef` | Ivory | Fondo principal |
+| `card` | `#fffdf9` | | Superficie de tarjetas y formularios |
+| `parchment` / `champagne-light` | `#f1e5d5` | Champán claro | Secciones alternas ("Cuándo y dónde", cierre) |
+| `champagne` | `#e2cdb2` | Champán | Detalles |
+| `beige` | `#d8c3a6` | Beige | Interruptores, bordes marcados |
+| `nude` / `nude-light` | `#ebcfc3` / `#f6e6de` | Nude rosado | Sección RSVP, aviso de adultos |
+| `blush` | `#e2ada5` | Rosa | Acento suave |
+| `silver` / `gold` | `#c49a4e` | Dorado | Líneas, íconos, el "&". Nunca para texto pequeño (2.4:1) |
+| `gold-dark` | `#8a6a2f` | Dorado oscuro | Etiquetas pequeñas en dorado y foco (4.6:1) |
+| `silver-light` | `#e6d7c6` | | Bordes |
+| `charcoal` / `espresso` / `cacao` | `#4a3830` | Cacao | Texto principal y botones (10.2:1 sobre ivory) |
+| `cacao-deep` | `#3a2b24` | | Hover de botones |
+| `muted` / `silver-dark` | `#6f5c50` | Taupe | Texto secundario y etiquetas |
+| `taupe` | `#9c8a7d` | | Placeholders |
+| `night` | `#1f1a17` | | Fondo oscuro de la galería Love Story (se queda oscura a propósito) |
+
+Tokens definidos en `app/globals.css` vía `@theme inline {}`. `tailwind.config.ts` **no lo carga Tailwind v4** (no hay `@config`); solo sirve de referencia para el IDE. Por eso `shadow-warm*` y `animate-slide-left` también se definen en `globals.css`.
+
+Clases propias en `globals.css`: `premium-card` (tarjeta con doble borde, la usa el panel), `soft-card` (tarjeta de un solo borde para la invitación), `snap-row` (carrusel horizontal nativo) y `names-3d` (nombres de la portada con borde dorado, relieve dorado hacia abajo y sombra suave).
 
 ### Tipografía
 
@@ -199,6 +209,8 @@ Tokens definidos en `app/globals.css` via `@theme inline {}`. Duplicados en `tai
 |---|---|---|
 | `font-display` / `font-sans` | Cormorant Garamond | Nombres, títulos, headings display |
 | `font-body` | Inter | UI, labels, body text, formularios |
+
+Ojo: `font-sans` es Cormorant, no una sans-serif. Para texto de interfaz usar `font-body`. Los campos de formulario usan Inter a 16 px como mínimo (con menos, Safari en iPhone hace zoom al tocarlos).
 
 ### Sombras personalizadas
 
@@ -218,20 +230,44 @@ Todos los labels de sección y UI usan `text-sm uppercase tracking-wider text-si
 
 ### Públicos (`components/public/`)
 
+Orden en la home (diseño mobile first, unas 6.5 pantallas en un iPhone): portada → galería → cuándo y dónde → lo que debes saber → RSVP → regalo → deseos → cierre, más la barra fija.
+
 | Componente | Sección | Descripción |
 |---|---|---|
-| `HeroSection` | `/` | Foto de la pareja (`public/images/hero.jpeg`) completa con `object-contain` sobre un fondo difuminado de la misma foto, nunca recortada. Escritorio: texto en franja inferior. Móvil: foto arriba y texto debajo. |
-| `CountdownTimer` | `/` | Cuenta regresiva en tiempo real (client). Días/Horas/Minutos/Segundos. |
-| `LoveStorySection` | `#historia` | Galería "Love Story": túnel 3D con 16 fotos en `public/images/love-story/` (client). Mantener presionado o el botón acelera; `prefers-reduced-motion` la deja estática. |
-| `WeddingDetails` | `#details` | Fecha, hora, lugar en grid de 3 columnas. |
-| `DressCodeCard` | `#dress-code` | Blanco/marfil ✓ — brillantina/glitter/brillo ✕ |
-| `AdultsOnlyNotice` | `#adults-only` | Aviso 18+ con ícono. |
-| `VenueSection` | `#venue` | Mapa placeholder + link a Google Maps. |
-| `RSVPForm` | `#rsvp` | Formulario completo con Server Action. Card premium sobre fondo parchment. |
-| `GiftQRCode` | `#gift` | QR code + métodos de pago (ATH Móvil, PayPal, Zelle). |
-| `GiftSubmissionForm` | `/gift` | Registro post-RSVP del regalo enviado. |
+| `HeroSection` | `#inicio` | Portada clara. Foto (`public/images/hero.jpeg`) siempre completa con `object-contain`. Móvil: foto arriba y texto debajo; escritorio: foto a la izquierda. Fecha con día de la semana, botones "Confirmar asistencia" (#rsvp) y "Agregar al calendario", y días que faltan. |
+| `StickyRSVPBar` | fija abajo | Barra con días que faltan y "Confirmar asistencia". Aparece al pasar la portada y se oculta mientras el RSVP está en pantalla (IntersectionObserver). En escritorio es una píldora centrada. |
+| `CalendarButton` | portada y detalles | Menú con Google Calendar y el `.ics` de `/calendario` (Apple/Outlook). Sin hora de fin a propósito. |
+| `DaysLeft` | portada y barra | "Faltan N días" (client). |
+| `LoveStorySection` | `#historia` | Galería "Love Story": túnel 3D con 16 fotos en `public/images/love-story/` (client). **Se queda igual y oscura** por decisión de los novios. |
+| `EventDetails` | `#detalles` | "Cuándo y dónde": fecha, hora y lugar una sola vez, botones de Google Maps, Waze y calendario, y `CountdownTimer` compacto. Destellos de fondo. Tiene espacio para la foto del lugar (`VENUE.photo` en `lib/venue.ts`, hoy `null`). |
+| `PearlButton` (`components/ui/pearl-button.tsx`) | toda la invitación | Botón perla (componente de 21st.dev) con colores de la paleta: `tone="cacao"` para acciones principales (Confirmar asistencia en portada, barra y formulario; Copiar número; Avisar de mi regalo) y `tone="champan"` para secundarias (Agregar al calendario). Con `href` es un enlace. Estilos en `.pearl-button` de `globals.css`, a 16 px para celular; el hover solo en dispositivos con puntero. El panel sigue usando `Button`. |
+| `SparklesCore` (`components/ui/sparkles.tsx`) | `#detalles` y `#rsvp` | Destellos de fondo con profundidad, en canvas propio (sin tsparticles ni framer-motion): capas lejos/medio/cerca (puntos nítidos, estrellas ✦ y bokeh), suben a 8–60 px/s con vaivén y hacen parallax al hacer scroll. Sprites pre-dibujados, pausa fuera de pantalla, sin interacción, quieto con `prefers-reduced-motion`, 60 % de densidad en pantallas < 640 px. Ajustes para fondos claros en `lib/sparkles.ts`. Por decisión de los novios va solo en esas dos secciones; no ponerlo en "Lo que debes saber" (dice "nada de brillos"). |
+| `CountdownTimer` | `#detalles` | Cuenta regresiva en una fila de 4 (client). |
+| `GuestGuidelines` | `#vestimenta` | "Lo que debes saber": código de vestimenta (escritorio: imagen oficial completa; móvil: carrusel de 3 looks + colores y reglas como texto) y aviso "Una noche para adultos". |
+| `RSVPForm` | `#rsvp` | Primero Sí/No. Si asiste: interruptor de acompañante (máximo uno, nombre obligatorio) y dos confirmaciones (solo adultos, vestimenta). Si no asiste, no se piden. |
+| `GiftSection` | `#regalo` y `/gift` | Regalo por ATH Móvil: número de Alexa, botón "Copiar número" y pasos. Ver "Regalo por ATH Móvil". |
+| `GiftSubmissionForm` | `/gift` | Aviso de regalo enviado (ATH Móvil u Otro). |
 | `MessageCarousel` | `#messages` | Carrusel infinito con mensajes aprobados/públicos. |
-| `Footer` | `/` | Nombre de la pareja, fecha, venue. |
+| `Footer` | `/` | Nombres y fecha. |
+
+### Regalo por ATH Móvil
+
+La cuenta de Alexa (939-224-8043) es **personal**. ATH Móvil no tiene botón web para cuentas personales: el botón oficial (`github.com/evertec/athmovil-javascript-api`) exige una cuenta **ATH Business** y su token público, y el cobro llega a esa cuenta de negocio. Por eso hoy la sección muestra el número con "Copiar número" y los pasos ("Enviar dinero" en la app). Si abren ATH Business, se llena `businessPublicToken` en `lib/gift.ts` y se integra el botón oficial (el invitado escribe su teléfono y recibe la solicitud de pago en la app).
+
+### Datos del evento
+
+`lib/event.ts` concentra título, fecha larga, hora, dirección, `SITE_URL`, el enlace de Google Calendar y el `.ics`. `lib/venue.ts` sigue siendo el único lugar del venue (incluye `wazeUrl`).
+
+### Imágenes del código de vestimenta
+
+Referencia oficial entregada el 17 de octubre de 2026 (1046 × 707 px). El original, con un borde negro de captura, está en `docs/referencias/codigo-vestimenta-original.webp`.
+
+| Archivo | Uso |
+|---|---|
+| `public/images/dress-code/codigo-vestimenta.webp` | Escritorio: la imagen completa sin el borde negro (1039 × 696). |
+| `public/images/dress-code/look-1.webp` … `look-3.webp` | Móvil: un recorte por pareja (≈ 2:3) para un carrusel. El título, los colores y las reglas van como texto HTML porque dentro de la imagen medirían unos 5 px en un teléfono. |
+
+Colores tomados de la imagen: blanco `#f7f5f4`, crema `#e7d5c6`, rosa `#eec1be`. Conviene pedir el archivo original en mayor resolución: en móvil cada pareja se amplía ~2×.
 
 ### Admin (`components/admin/`)
 
@@ -265,7 +301,7 @@ Todos los labels de sección y UI usan `text-sm uppercase tracking-wider text-si
 
 | Archivo | Función | Efecto |
 |---|---|---|
-| `lib/actions/rsvp.ts` | `submitRSVP` | INSERT en `guests` + `guest_messages`. Retorna `guestId`. |
+| `lib/actions/rsvp.ts` | `submitRSVP` | INSERT en `guests` + `guest_messages`. El `id` se genera en el servidor (`crypto.randomUUID()`) porque RLS no deja a `anon` leer `guests` y `.insert().select()` fallaría. Retorna `guestId`. |
 | `lib/actions/gifts.ts` | `submitGift` | INSERT en `gift_transactions`. |
 
 Ambas usan la firma `(prevState: State, formData: FormData)` requerida por `useActionState` de React 19.
@@ -301,6 +337,10 @@ Usa Zod v4. Diferencias críticas vs Zod v3:
 | `useActionState` type error | React 19 exige `(prevState, formData)` | Primer parámetro `_prevState: State` en todas las server actions |
 | Conflicto de rutas en `/` | `app/(public)/page.tsx` y `app/page.tsx` ambas mapean a `/` | Solo usar `app/page.tsx` para la home |
 | Zod v4 error shape | API cambió | `.issues` en lugar de `.errors` |
+| RSVP fallaba al guardar | `.insert().select("id")` necesita SELECT y RLS solo da INSERT a `anon` | Generar el `id` en el servidor e insertar sin `.select()` |
+| Fondo en franjas cada pantalla | Sin color en `html`, el degradado del `body` se pinta en el lienzo con el alto de la ventana y se repite | `html { background-color }` en `globals.css` |
+| Clases de `tailwind.config.ts` no existen | Tailwind v4 no carga ese archivo sin `@config` | Definir tokens, sombras y animaciones en `@theme` de `globals.css` |
+| Zoom al escribir en iPhone | Campos con letra menor de 16 px | `Input` usa `text-base` (16 px) y `font-body` |
 
 ---
 
@@ -330,12 +370,14 @@ Usa Zod v4. Diferencias críticas vs Zod v3:
 
 ## Pendiente / Ideas futuras
 
-- [ ] Configurar las variables de Supabase en Vercel (`ktiams-projects/alexa-wed-invitation`) y redesplegar: producción muestra "Proximamente"
-- [ ] Crear el usuario admin de Alexa en Supabase Auth y probar `/admin`
-- [ ] Subir QR code real a Supabase Storage y actualizar `gift_qr_url` desde settings
-- [ ] Agregar mapa embebido de Hacienda El Mabú en `VenueSection` (hoy hay enlaces a ficha y ruta de Google Maps)
+- [ ] **Álbum de fotos** (propuesto, pendiente de aprobación): sección en la invitación; página para subir hasta 8 fotos por invitado vía QR que los novios activan el día de la boda; moderación en el panel (aprobar/rechazar, activar subida, publicar álbum). Necesita tabla `photos`, bucket privado en Supabase Storage y dos interruptores en `wedding_settings`. Maquetas en https://claude.ai/artifact/TFMdLGmxxn6H6XFvJdMTNi
+- [ ] Foto del venue para "Cuándo y dónde": guardarla en `public/images/venue/` y llenar `VENUE.photo`
+- [ ] Probar un RSVP real de punta a punta (la corrección de RLS no se ha probado contra Supabase) y borrar el registro de prueba
+- [ ] Probar los inicios de sesión del panel (`bizdev4uai@gmail.com`, `kmatos_santana@gmail.com`); hoy cualquier usuario autenticado es admin
+- [ ] Pasar a español `wedding_settings.dress_code` ("White, casual elegant…") y `gift_instructions` (habla de un QR); la invitación ya no los muestra, pero el panel sí los edita
+- [ ] Opcional: cuenta ATH Business para el botón de pago oficial (ver "Regalo por ATH Móvil")
+- [ ] Conseguir la imagen del código de vestimenta en mayor resolución
+- [ ] Aprobar con la novia la selección y el orden de las 16 fotos de la galería Love Story
 - [ ] Confirmación por email al invitado tras RSVP (Supabase Edge Function + Resend)
 - [ ] Paginación en la tabla de invitados (cuando supere ~100 registros)
 - [ ] Export detallado de regalos en CSV separado
-- [ ] Screenshot upload para comprobante de regalo (`screenshot_url` ya existe en el schema)
-- [ ] Aprobar con la novia la selección y el orden de las 16 fotos de la galería Love Story
