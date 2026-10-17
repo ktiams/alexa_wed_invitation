@@ -8,6 +8,8 @@ import { GiftSection } from "@/components/public/GiftSection";
 import { MessageCarousel } from "@/components/public/MessageCarousel";
 import { Footer } from "@/components/public/Footer";
 import { StickyRSVPBar } from "@/components/public/StickyRSVPBar";
+import { EnvelopeIntro } from "@/components/public/EnvelopeIntro";
+import { AlbumSection } from "@/components/public/AlbumSection";
 import type { WeddingSettings, GuestMessage } from "@/lib/types/database";
 
 async function getPageData() {
@@ -42,12 +44,14 @@ export default async function HomePage() {
 
   return (
     <main className="pb-24 lg:pb-0">
+      <EnvelopeIntro />
       <HeroSection />
       <LoveStorySection />
       <EventDetails />
       <GuestGuidelines />
       <RSVPForm />
       <GiftSection />
+      <AlbumSection />
       {messages.length > 0 && <MessageCarousel messages={messages} />}
       <Footer />
       <StickyRSVPBar />

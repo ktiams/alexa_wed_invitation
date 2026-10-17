@@ -1,8 +1,9 @@
 import Image from "next/image";
+import { LooksCarousel, type Look } from "@/components/public/LooksCarousel";
 
 const DRESS_CODE_IMAGE = { src: "/images/dress-code/codigo-vestimenta.webp", width: 1039, height: 696 };
 
-const looks = [
+const looks: Look[] = [
   { src: "/images/dress-code/look-1.webp", caption: "Blanco y crema", alt: "Ejemplo: traje beige con camisa blanca y conjunto blanco" },
   { src: "/images/dress-code/look-2.webp", caption: "Rosa y crema", alt: "Ejemplo: traje rosa con camisa blanca y vestido crema" },
   { src: "/images/dress-code/look-3.webp", caption: "Crema y rosa", alt: "Ejemplo: traje crema con camisa rosa y vestido rosa" },
@@ -38,20 +39,8 @@ export function GuestGuidelines() {
         />
 
         <div className="flex flex-col gap-5 lg:hidden">
-          <div className="snap-row -mx-4 px-4" tabIndex={0} aria-label="Ejemplos de looks">
-            {looks.map((look) => (
-              <figure
-                key={look.src}
-                className="relative m-0 aspect-[2/3] w-[74%] max-w-xs overflow-hidden rounded-2xl border border-silver-light bg-[#efe6dd]"
-              >
-                <Image src={look.src} alt={look.alt} fill sizes="74vw" className="object-cover" />
-                <figcaption className="absolute bottom-2.5 left-2.5 rounded-full bg-card/90 px-3 py-1 text-xs font-medium text-charcoal">
-                  {look.caption}
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-          <p className="-mt-2 text-center text-xs text-muted">Desliza para ver los 3 ejemplos</p>
+          <LooksCarousel looks={looks} />
+          <p className="-mt-2 text-center text-xs text-muted">3 ejemplos · también puedes deslizar</p>
 
           <p className="text-center text-xs uppercase tracking-[0.3em] text-gold-dark">Colores exclusivos</p>
           <ul className="grid grid-cols-3 gap-2 text-center">

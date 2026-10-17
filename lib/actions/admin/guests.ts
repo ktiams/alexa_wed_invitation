@@ -1,6 +1,7 @@
 "use server";
 
 import { createAdminClient } from "@/lib/supabase/admin";
+import { requireAdmin } from "@/lib/auth/requireAdmin";
 import type { AttendanceStatus } from "@/lib/types/database";
 import { revalidatePath } from "next/cache";
 
@@ -16,6 +17,7 @@ export async function updateGuest(
     admin_notes?: string;
   }
 ) {
+  await requireAdmin();
   const supabase = createAdminClient();
   const { error } = await supabase.from("guests").update(data).eq("id", id);
   if (error) throw new Error(error.message);
@@ -24,6 +26,7 @@ export async function updateGuest(
 }
 
 export async function addAdminNote(id: string, note: string) {
+  await requireAdmin();
   const supabase = createAdminClient();
   const { error } = await supabase
     .from("guests")

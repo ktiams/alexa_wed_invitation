@@ -6,6 +6,8 @@ export const SITE_URL = "https://alexa-wed-invitation.vercel.app";
 
 export const EVENT = {
   couple: "Anthony & Alexandra",
+  groomFullName: "Anthony Ugarte",
+  brideFullName: "Alexandra Vargas",
   title: "Boda de Anthony & Alexandra",
   start: WEDDING_DATE,
   /** Texto largo de la fecha, con el día de la semana. */

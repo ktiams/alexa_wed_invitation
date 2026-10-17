@@ -1,9 +1,11 @@
 "use server";
 
 import { createAdminClient } from "@/lib/supabase/admin";
+import { requireAdmin } from "@/lib/auth/requireAdmin";
 import { revalidatePath } from "next/cache";
 
 export async function verifyGift(id: string) {
+  await requireAdmin();
   const supabase = createAdminClient();
   const { error } = await supabase
     .from("gift_transactions")
@@ -14,6 +16,7 @@ export async function verifyGift(id: string) {
 }
 
 export async function rejectGift(id: string) {
+  await requireAdmin();
   const supabase = createAdminClient();
   const { error } = await supabase
     .from("gift_transactions")

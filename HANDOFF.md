@@ -70,6 +70,9 @@ Hecho y verificado en local (lint, TypeScript y build pasan; capturas en tamaño
 - La galería Love Story queda igual y oscura, por decisión de los novios.
 - Destellos dorados de fondo con profundidad (`components/ui/sparkles.tsx`, sin dependencias nuevas) en "Cuándo y dónde" y en el RSVP; los nombres de la portada llevan borde dorado y relieve (`names-3d`).
 - Botones perla (`components/ui/pearl-button.tsx`): cacao para los principales y champán para "Agregar al calendario".
+- Sobre de bienvenida (`EnvelopeIntro`), portada con caligrafía dorada y flores, carrusel automático de looks.
+- Álbum de fotos completo (`/album/subir`, `/album`, `/admin/fotos`, sección `#album`). **Falta aplicar `supabase/migrations/002_album.sql`** en el SQL Editor de Supabase; hasta entonces todo muestra "se activa el día de la boda".
+- Todas las Server Actions del panel exigen sesión (`requireAdmin`); antes cualquiera podía llamarlas.
 - La página bajó de 10.3 a unas 6.5 pantallas en un iPhone.
 
 Falta:
@@ -77,7 +80,7 @@ Falta:
 1. Empujar la rama, revisar el preview de Vercel en el celular y, con el visto bueno, fusionar a `master`.
 2. Probar un RSVP real y borrar el registro de prueba.
 3. Foto del venue: guardarla en `public/images/venue/` y llenar `VENUE.photo` en `lib/venue.ts`.
-4. **Álbum de fotos**: maquetas listas (https://claude.ai/artifact/TFMdLGmxxn6H6XFvJdMTNi), pendiente de aprobación. Requiere migración en Supabase (tabla, bucket y dos interruptores); pedir permiso antes de aplicarla.
+4. **Álbum de fotos**: código listo. Aplicar `supabase/migrations/002_album.sql` en Supabase → SQL Editor (es aditiva) y probar una subida real.
 5. Pasar a español `wedding_settings.dress_code` y `gift_instructions`.
 6. Lo demás de la lista "Pendiente" de `PROJECT.md`.
 

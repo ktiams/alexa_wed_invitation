@@ -9,6 +9,7 @@ const navItems = [
   { href: "/admin/guests", label: "Invitados" },
   { href: "/admin/messages", label: "Mensajes" },
   { href: "/admin/gifts", label: "Regalos" },
+  { href: "/admin/fotos", label: "Fotos" },
   { href: "/admin/settings", label: "Configuración" },
 ];
 

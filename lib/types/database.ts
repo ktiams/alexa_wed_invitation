@@ -51,6 +51,10 @@ export interface WeddingSettings {
   dress_code: string;
   gift_qr_url: string | null;
   gift_instructions: string | null;
+  /** Migración 002: subida de fotos abierta (QR de las mesas). */
+  photo_upload_enabled?: boolean;
+  /** Migración 002: álbum visible en la invitación y en /album. */
+  album_published?: boolean;
   created_at: string;
   updated_at: string;
 }

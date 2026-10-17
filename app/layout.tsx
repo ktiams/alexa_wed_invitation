@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Inter } from "next/font/google";
+import { Cormorant_Garamond, Great_Vibes, Inter } from "next/font/google";
 import "./globals.css";
 import { VENUE } from "@/lib/venue";
 import { EVENT, SITE_URL } from "@/lib/event";
@@ -15,6 +15,14 @@ const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600"],
+});
+
+// Caligrafía para "Boda" e "y" de la portada (combinación de la tarjeta de referencia:
+// script dorado + mayúsculas serif espaciadas).
+const greatVibes = Great_Vibes({
+  variable: "--font-great-vibes",
+  subsets: ["latin"],
+  weight: "400",
 });
 
 const title = `${EVENT.couple} · ${EVENT.dateShort}`;
@@ -48,7 +56,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`${cormorant.variable} ${inter.variable} h-full`}>
+    <html lang="es" className={`${cormorant.variable} ${inter.variable} ${greatVibes.variable} h-full`}>
       <body className="min-h-full bg-cream text-charcoal antialiased">
         {children}
       </body>

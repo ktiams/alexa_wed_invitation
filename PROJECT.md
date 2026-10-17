@@ -240,6 +240,11 @@ Orden en la home (diseño mobile first, unas 6.5 pantallas en un iPhone): portad
 | `DaysLeft` | portada y barra | "Faltan N días" (client). |
 | `LoveStorySection` | `#historia` | Galería "Love Story": túnel 3D con 16 fotos en `public/images/love-story/` (client). **Se queda igual y oscura** por decisión de los novios. |
 | `EventDetails` | `#detalles` | "Cuándo y dónde": fecha, hora y lugar una sola vez, botones de Google Maps, Waze y calendario, y `CountdownTimer` compacto. Destellos de fondo. Tiene espacio para la foto del lugar (`VENUE.photo` en `lib/venue.ts`, hoy `null`). |
+| `EnvelopeIntro` | pantalla completa al entrar | Sobre vertical de dos solapas (encaje festoneado y flores en relieve, como el pin de Pinterest de referencia) con sello de cera dorado "A&A". Al tocar, o solo a los 3 s: el sello se parte, las solapas se abren en 3D, se ve la tarjeta y sale con zoom y destello (~5 s). Una vez por sesión (`sessionStorage`). Basado en el `WelcomeScreen` del Sweet 16 de Cathyanis, pero en CSS (`.env-*` en `globals.css`), sin framer-motion. |
+| `LooksCarousel` | `#vestimenta` (móvil) | Looks del código de vestimenta: cada uno se queda 2 s centrado y avanza solo 1 → 2 → 3 → 1. Se pausa 6 s si el invitado lo toca, fuera de pantalla y con `prefers-reduced-motion`. |
+| `AlbumSection` | `#album` | "Álbum de fotos": antes de la boda explica el QR y los pasos; con la subida abierta, botón "Subir mis fotos"; con el álbum publicado, 6 miniaturas y "Ver el álbum". |
+| `PhotoUploader` | `/album/subir` | Nombre, elegir fotos, reducción en el celular (1600 px y miniatura de 480 px, JPEG sin metadata) y subida directa a Storage con URLs firmadas. Máximo 8 por celular. |
+| `AlbumGallery` | `/album` | Cuadrícula de fotos aprobadas con visor a pantalla completa (flechas, deslizar, Esc). |
 | `PearlButton` (`components/ui/pearl-button.tsx`) | toda la invitación | Botón perla (componente de 21st.dev) con colores de la paleta: `tone="cacao"` para acciones principales (Confirmar asistencia en portada, barra y formulario; Copiar número; Avisar de mi regalo) y `tone="champan"` para secundarias (Agregar al calendario). Con `href` es un enlace. Estilos en `.pearl-button` de `globals.css`, a 16 px para celular; el hover solo en dispositivos con puntero. El panel sigue usando `Button`. |
 | `SparklesCore` (`components/ui/sparkles.tsx`) | `#detalles` y `#rsvp` | Destellos de fondo con profundidad, en canvas propio (sin tsparticles ni framer-motion): capas lejos/medio/cerca (puntos nítidos, estrellas ✦ y bokeh), suben a 8–60 px/s con vaivén y hacen parallax al hacer scroll. Sprites pre-dibujados, pausa fuera de pantalla, sin interacción, quieto con `prefers-reduced-motion`, 60 % de densidad en pantallas < 640 px. Ajustes para fondos claros en `lib/sparkles.ts`. Por decisión de los novios va solo en esas dos secciones; no ponerlo en "Lo que debes saber" (dice "nada de brillos"). |
 | `CountdownTimer` | `#detalles` | Cuenta regresiva en una fila de 4 (client). |
@@ -249,6 +254,22 @@ Orden en la home (diseño mobile first, unas 6.5 pantallas en un iPhone): portad
 | `GiftSubmissionForm` | `/gift` | Aviso de regalo enviado (ATH Móvil u Otro). |
 | `MessageCarousel` | `#messages` | Carrusel infinito con mensajes aprobados/públicos. |
 | `Footer` | `/` | Nombres y fecha. |
+
+### Portada y tipografía
+
+Combinación tomada de una tarjeta de referencia: caligrafía **Great Vibes** (`font-script`, vía `next/font`) en dorado foil (`.gold-foil`) para "Boda" e "y", y nombres completos en mayúsculas de Cormorant con tracking y `.names-3d` (borde dorado y relieve, en `em`). Las flores (`public/images/flores/*.webp`) salen de las esquinas de la imagen oficial del código de vestimenta, con el fondo crema quitado; no se copiaron las de la referencia, que es diseño de un tercero.
+
+### Álbum de fotos de los invitados
+
+- **Dónde**: sección `#album` en la invitación (después de Regalo); QR en las mesas que lleva a `/album/subir`; álbum en `/album`; moderación en `/admin/fotos`.
+- **Datos**: migración `supabase/migrations/002_album.sql` → tabla `album_photos`, bucket **privado** `album` y columnas `photo_upload_enabled` / `album_published` en `wedding_settings`. Mientras no se aplique, todo muestra el estado "se activa el día de la boda" y el panel avisa que falta la migración.
+- **Subida**: `startAlbumUpload` (Server Action) valida que la subida esté abierta y el límite de 8 por celular (cookie anónima `aa_album_uid`) y devuelve URLs firmadas de subida; el navegador sube foto + miniatura directo a Storage (no pasa por Vercel, que limita el tamaño de las peticiones); `finishAlbumUpload` registra solo lo que de verdad está en Storage, en estado `pending`.
+- **Ver**: el servidor firma URLs de 1 hora para las fotos aprobadas (bucket privado: las pendientes nunca son públicas).
+- **Panel**: interruptores "Subida de fotos" y "Álbum público", QR para descargar (paquete `qrcode`) y pestañas Por revisar / Aprobadas / Rechazadas con aprobar, rechazar o aprobar todas.
+
+### Seguridad del panel
+
+Las Server Actions son endpoints públicos aunque `proxy.ts` proteja las páginas. Todas las acciones de `lib/actions/admin/*` y las de administración del álbum llaman primero a `requireAdmin()` (`lib/auth/requireAdmin.ts`), que exige sesión de Supabase Auth.
 
 ### Regalo por ATH Móvil
 
@@ -370,7 +391,8 @@ Usa Zod v4. Diferencias críticas vs Zod v3:
 
 ## Pendiente / Ideas futuras
 
-- [ ] **Álbum de fotos** (propuesto, pendiente de aprobación): sección en la invitación; página para subir hasta 8 fotos por invitado vía QR que los novios activan el día de la boda; moderación en el panel (aprobar/rechazar, activar subida, publicar álbum). Necesita tabla `photos`, bucket privado en Supabase Storage y dos interruptores en `wedding_settings`. Maquetas en https://claude.ai/artifact/TFMdLGmxxn6H6XFvJdMTNi
+- [ ] **Aplicar `supabase/migrations/002_album.sql`** en Supabase (SQL Editor) para activar el álbum; después probar una subida real y borrarla
+- [ ] Imprimir el QR del álbum (desde `/admin/fotos`) y, el día de la boda, activar "Subida de fotos"; después de la boda, aprobar fotos y activar "Álbum público"
 - [ ] Foto del venue para "Cuándo y dónde": guardarla en `public/images/venue/` y llenar `VENUE.photo`
 - [ ] Probar un RSVP real de punta a punta (la corrección de RLS no se ha probado contra Supabase) y borrar el registro de prueba
 - [ ] Probar los inicios de sesión del panel (`bizdev4uai@gmail.com`, `kmatos_santana@gmail.com`); hoy cualquier usuario autenticado es admin
