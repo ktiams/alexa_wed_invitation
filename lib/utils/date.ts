@@ -29,3 +29,16 @@ export function formatDate(dateStr: string): string {
     day: "numeric",
   });
 }
+
+const photoDateFormat = new Intl.DateTimeFormat("es-PR", {
+  day: "numeric",
+  month: "short",
+  hour: "numeric",
+  minute: "2-digit",
+  timeZone: "America/Puerto_Rico",
+});
+
+/** Fecha y hora de subida de una foto del álbum, en hora de Puerto Rico ("5 dic, 7:42 p. m."). */
+export function photoDate(dateStr: string): string {
+  return photoDateFormat.format(new Date(dateStr));
+}

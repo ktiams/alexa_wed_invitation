@@ -59,21 +59,8 @@ export interface WeddingSettings {
   updated_at: string;
 }
 
-// Joined type for admin guest table view
+// Invitado con sus avisos de regalo y su mensaje (lista de Invitados del panel)
 export interface GuestWithDetails extends Guest {
   gift_transactions?: GiftTransaction[];
   guest_messages?: GuestMessage[];
-}
-
-// Dashboard aggregate stats
-export interface DashboardStats {
-  total_attending: number;
-  total_not_attending: number;
-  total_pending: number;
-  total_companions: number;
-  estimated_attendance: number;
-  total_gifts_submitted: number;
-  total_gifts_verified_amount: number;
-  pending_gift_verifications: number;
-  pending_messages: number;
 }

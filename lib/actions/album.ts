@@ -132,37 +132,12 @@ export async function finishAlbumUpload(input: {
   const { error } = await supabase.from("album_photos").insert(rows);
   if (error) return { ok: false, error: "No pudimos guardar las fotos. Inténtalo de nuevo." };
 
-  revalidatePath("/admin/fotos");
+  revalidatePath("/admin", "layout");
   return { ok: true, saved: rows.length, remaining: Math.max(0, room - rows.length) };
 }
 
 // ─── Panel de los novios ──────────────────────────────────────────────────────
-
-export async function setPhotoUploadEnabled(enabled: boolean) {
-  await requireAdmin();
-  const supabase = createAdminClient();
-  const { error } = await supabase
-    .from("wedding_settings")
-    .update({ photo_upload_enabled: enabled })
-    .not("id", "is", null);
-  if (error) throw new Error(error.message);
-  revalidatePath("/admin/fotos");
-  revalidatePath("/album/subir");
-  revalidatePath("/");
-}
-
-export async function setAlbumPublished(published: boolean) {
-  await requireAdmin();
-  const supabase = createAdminClient();
-  const { error } = await supabase
-    .from("wedding_settings")
-    .update({ album_published: published })
-    .not("id", "is", null);
-  if (error) throw new Error(error.message);
-  revalidatePath("/admin/fotos");
-  revalidatePath("/album");
-  revalidatePath("/");
-}
+// Solo aprueban o rechazan fotos. La subida y el álbum se abren por fecha (lib/album.ts).
 
 export async function setPhotoStatus(ids: string[], status: "approved" | "rejected" | "pending") {
   await requireAdmin();
@@ -171,7 +146,7 @@ export async function setPhotoStatus(ids: string[], status: "approved" | "reject
   const supabase = createAdminClient();
   const { error } = await supabase.from("album_photos").update({ status }).in("id", valid);
   if (error) throw new Error(error.message);
-  revalidatePath("/admin/fotos");
+  revalidatePath("/admin", "layout");
   revalidatePath("/album");
   revalidatePath("/");
 }

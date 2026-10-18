@@ -16,6 +16,7 @@ Desde el 17 de octubre se trabaja con Claude Code.
 | PR #1 "nueva invitación Luxe" (ramas `feature/luxe-*`) | Reescritura en Vinext/Vite de agosto | **Descartada.** Cerrar el PR sin merge. |
 | Base de datos | Supabase, proyecto ref **`pjyaqjjpmjesjwbbmifz`** ("Alexas Wedding Invite's Project", org "Senzai- Katia's Department") | Esquema `001_initial_schema.sql` aplicado. Tablas sin datos al 17 oct. |
 | Hosting | Vercel, proyecto `alexa-wed-invitation` en el scope **`ktiams-projects`** | Despliega solo con cada push a `master`; cada rama empujada genera un preview. Producción: https://alexa-wed-invitation.vercel.app |
+| Cron | Vercel Cron → `/api/keepalive` todos los días (`vercel.json`) | Mantiene activo Supabase (el plan gratis pausa tras 7 días sin uso). Ver `PROJECT.md` → "Evitar que Supabase pause el proyecto". |
 
 ### Cuentas
 
@@ -75,13 +76,26 @@ Hecho y verificado en local (lint, TypeScript y build pasan; capturas en tamaño
 - Todas las Server Actions del panel exigen sesión (`requireAdmin`); antes cualquiera podía llamarlas.
 - La página bajó de 10.3 a unas 6.5 pantallas en un iPhone.
 
+### Panel de los novios simplificado (18 oct 2026, en producción)
+
+Propuesta aprobada: https://claude.ai/artifact/TNMjTBSkbdhte6QkRXmmkb (con un cambio: "Autorizaciones" es solo para fotos).
+
+- Tres pestañas: **Invitados**, **Autorizaciones** (fotos por aprobar) y **Fotos** (QR y álbum). En el celular van abajo; en la computadora, arriba.
+- Se quitaron Configuración, Resumen, Mensajes, Regalos, el detalle de cada invitado, las notas internas y "Exportar CSV". Los novios no pueden cambiar nada de la invitación.
+- Invitados sin botones: cuántas personas vienen, cuántos mensajes y regalos hay, y una lista donde cada fila muestra el mensaje privado y el regalo avisado; al tocar un nombre se ven teléfono y correo.
+- Mensajes del RSVP **privados**: ya no hay sección pública de deseos. Los avisos de regalo no se verifican.
+- El álbum se abre **solo por fecha**: subida desde el 5 de diciembre y álbum en la invitación desde el 6 (ver `lib/album.ts`).
+- QR del álbum en Fotos: imprimir la tarjeta de mesa (`/admin/tarjeta-qr`, 5 × 7 in), compartir el enlace o guardar la imagen PNG. Se ve aunque falte la migración 002.
+- Login con la foto `public/images/panel/login-novios.jpg` (es `love-06.jpeg` recortada para quitar un letrero de estacionamiento), destellos dorados de fondo dentro del panel y botones perla.
+- Verificado: lint, TypeScript, build y capturas del login (375, 390 y 1366 px). Las páginas internas necesitan sesión: falta verlas con una cuenta real.
+
 Falta:
 
 1. ~~Empujar la rama y fusionar a `master`~~: en producción desde el 18 oct 2026.
 2. ~~Probar un RSVP real~~: hecho el 18 oct 2026 en producción (asiste + acompañante + mensaje). Se guardó bien y se borró.
 3. Foto del venue: guardarla en `public/images/venue/` y llenar `VENUE.photo` en `lib/venue.ts`.
 4. **Álbum de fotos**: código listo. Aplicar `supabase/migrations/002_album.sql` en Supabase → SQL Editor (es aditiva) y probar una subida real.
-5. Pasar a español `wedding_settings.dress_code` y `gift_instructions`.
+5. Revisar el panel nuevo con sesión (Invitados, Autorizaciones, Fotos y la tarjeta del QR) en el celular. Se subió a pedido del usuario sin que Claude pudiera verlo por dentro (no tiene la contraseña). Para entrar: `bizdev4uai@gmail.com` o `kmatos_santana@gmail.com`; `ktiams-16@hotmail.com` no es usuario del panel.
 6. Lo demás de la lista "Pendiente" de `PROJECT.md`.
 
 ---
@@ -112,6 +126,7 @@ Falta:
 - Paleta "boda nude elegante" con portada clara, también en el panel.
 - Código de vestimenta: casual elegante, solamente blanco, crema o rosa, sin otros colores ni brillos.
 - Calendario sin hora de fin hasta que los novios la definan.
+- 18 oct 2026, panel: los novios no tienen configuración; solo autorizan fotos. Mensajes del RSVP privados (el campo dice "Mensaje para los novios"), regalos sin verificación, álbum abierto por fecha. Botones principales del panel con el botón perla.
 - 18 oct 2026: portada "A" (foto protagonista con el texto encima). Lo más importante es que se adapte a cada teléfono: en el celular la portada completa (título, nombres, fecha, lugar y los dos botones) cabe en una pantalla.
 
 ---

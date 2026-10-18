@@ -5,34 +5,22 @@ import { EventDetails } from "@/components/public/EventDetails";
 import { GuestGuidelines } from "@/components/public/GuestGuidelines";
 import { RSVPForm } from "@/components/public/RSVPForm";
 import { GiftSection } from "@/components/public/GiftSection";
-import { MessageCarousel } from "@/components/public/MessageCarousel";
 import { Footer } from "@/components/public/Footer";
 import { StickyRSVPBar } from "@/components/public/StickyRSVPBar";
 import { EnvelopeIntro } from "@/components/public/EnvelopeIntro";
 import { AlbumSection } from "@/components/public/AlbumSection";
-import type { WeddingSettings, GuestMessage } from "@/lib/types/database";
+import type { WeddingSettings } from "@/lib/types/database";
 
-async function getPageData() {
+// Los mensajes del RSVP son privados para los novios (se leen en /admin), así que la
+// invitación ya no muestra una sección pública de deseos.
+async function getSettings() {
   const supabase = await createClient();
-
-  const [settingsRes, messagesRes] = await Promise.all([
-    supabase.from("wedding_settings").select("*").single(),
-    supabase
-      .from("guest_messages")
-      .select("id, guest_id, guest_name, message, is_approved, is_public, created_at, updated_at")
-      .eq("is_approved", true)
-      .eq("is_public", true)
-      .order("created_at", { ascending: false }),
-  ]);
-
-  return {
-    settings: settingsRes.data as WeddingSettings | null,
-    messages: (messagesRes.data ?? []) as GuestMessage[],
-  };
+  const { data } = await supabase.from("wedding_settings").select("*").single();
+  return data as WeddingSettings | null;
 }
 
 export default async function HomePage() {
-  const { settings, messages } = await getPageData();
+  const settings = await getSettings();
 
   if (!settings) {
     return (
@@ -52,7 +40,6 @@ export default async function HomePage() {
       <RSVPForm />
       <GiftSection />
       <AlbumSection />
-      {messages.length > 0 && <MessageCarousel messages={messages} />}
       <Footer />
       <StickyRSVPBar />
     </main>

@@ -8,9 +8,9 @@ const steps = [
   "Los novios las revisan y las suman al álbum.",
 ];
 
-// "Álbum de fotos" en la invitación. Cambia según lo que activen los novios en /admin/fotos:
+// "Álbum de fotos" en la invitación. Cambia solo por fecha (getAlbumSettings en lib/album.ts):
 // antes de la boda explica cómo funcionará; el día de la boda invita a subir fotos;
-// con el álbum publicado muestra una vista previa y el enlace al álbum.
+// desde el día siguiente muestra una vista previa y el enlace al álbum.
 export async function AlbumSection() {
   const settings = await getAlbumSettings();
   const preview = settings.published ? await withSignedUrls(await listPhotos("approved", 6)) : [];

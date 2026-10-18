@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { setPhotoStatus } from "@/lib/actions/album";
+import { PearlButton } from "@/components/ui/pearl-button";
 
 export interface ModerationPhoto {
   id: string;
@@ -13,10 +14,13 @@ export interface ModerationPhoto {
 
 type Status = "pending" | "approved" | "rejected";
 
-const btn = "flex min-h-10 items-center justify-center rounded-xl px-2 font-body text-sm font-semibold disabled:opacity-50";
+const btn = "flex min-h-10 items-center justify-center rounded-full px-2 font-body text-sm font-semibold transition-colors disabled:opacity-50";
+const main = `${btn} bg-espresso text-ivory hover:bg-cacao-deep`;
+const soft = `${btn} border border-champagne bg-champagne-light text-charcoal hover:bg-champagne`;
 
-// Cuadrícula de moderación: aprobar o rechazar una a una, o todas las de la pestaña.
-// En celular va a 2 columnas, para que Alexa pueda revisar desde el teléfono.
+// Cuadrícula de fotos del panel. En Autorizaciones (pending) se aprueban o rechazan una a
+// una, o todas juntas; en Fotos se quitan del álbum o se devuelven a él.
+// En celular va a 2 columnas, para que los novios revisen desde el teléfono.
 export function PhotoModeration({ photos, status }: { photos: ModerationPhoto[]; status: Status }) {
   const [hidden, setHidden] = useState<Set<string>>(new Set());
   const [pending, startTransition] = useTransition();
@@ -43,8 +47,8 @@ export function PhotoModeration({ photos, status }: { photos: ModerationPhoto[];
 
   if (visible.length === 0) {
     return (
-      <p className="rounded-2xl border border-silver-light bg-card px-4 py-10 text-center font-body text-sm text-muted">
-        {status === "pending" ? "No hay fotos por revisar." : status === "approved" ? "Todavía no hay fotos aprobadas." : "No hay fotos rechazadas."}
+      <p className="rounded-3xl border border-silver-light bg-card/85 px-4 py-10 text-center font-body text-sm text-muted">
+        {status === "pending" ? "No hay fotos por revisar." : status === "approved" ? "Todavía no hay fotos en el álbum." : "No hay fotos rechazadas."}
       </p>
     );
   }
@@ -52,20 +56,18 @@ export function PhotoModeration({ photos, status }: { photos: ModerationPhoto[];
   return (
     <div className="flex flex-col gap-4">
       {status === "pending" && visible.length > 1 && (
-        <button
-          type="button"
+        <PearlButton
           disabled={pending}
           onClick={() => move(visible.map((p) => p.id), "approved")}
-          className="self-start rounded-full bg-espresso px-5 py-2.5 font-body text-sm font-semibold text-ivory disabled:opacity-50"
-        >
-          Aprobar las {visible.length} fotos
-        </button>
+          label={`Aprobar las ${visible.length} fotos`}
+          className="w-full sm:w-auto sm:self-start"
+        />
       )}
       {error && <p className="font-body text-sm text-red-700">{error}</p>}
 
       <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {visible.map((photo) => (
-          <li key={photo.id} className="flex flex-col overflow-hidden rounded-2xl border border-silver-light bg-card">
+          <li key={photo.id} className="flex flex-col overflow-hidden rounded-2xl border border-silver-light bg-card/90">
             <a href={photo.url} target="_blank" rel="noopener noreferrer" className="block aspect-square bg-parchment">
               {/* eslint-disable-next-line @next/next/no-img-element -- URL firmada de Supabase */}
               <img src={photo.thumbUrl} alt={`Foto de ${photo.by}`} loading="lazy" className="h-full w-full object-cover" />
@@ -74,20 +76,25 @@ export function PhotoModeration({ photos, status }: { photos: ModerationPhoto[];
               <b className="block truncate text-sm text-charcoal">{photo.by}</b>
               {photo.at}
             </div>
-            <div className="grid grid-cols-2 gap-1.5 p-2">
-              {status !== "approved" && (
-                <button type="button" disabled={pending} onClick={() => move([photo.id], "approved")} className={`${btn} bg-espresso text-ivory`}>
-                  Aprobar
-                </button>
+            <div className={`grid gap-1.5 p-2 ${status === "pending" ? "grid-cols-2" : "grid-cols-1"}`}>
+              {status === "pending" && (
+                <>
+                  <button type="button" disabled={pending} onClick={() => move([photo.id], "approved")} className={main}>
+                    Aprobar
+                  </button>
+                  <button type="button" disabled={pending} onClick={() => move([photo.id], "rejected")} className={soft}>
+                    Rechazar
+                  </button>
+                </>
               )}
-              {status !== "rejected" && (
-                <button type="button" disabled={pending} onClick={() => move([photo.id], "rejected")} className={`${btn} border border-silver-light text-muted`}>
-                  {status === "approved" ? "Quitar" : "Rechazar"}
+              {status === "approved" && (
+                <button type="button" disabled={pending} onClick={() => move([photo.id], "rejected")} className={soft}>
+                  Quitar del álbum
                 </button>
               )}
               {status === "rejected" && (
-                <button type="button" disabled={pending} onClick={() => move([photo.id], "pending")} className={`${btn} border border-silver-light text-muted`}>
-                  A revisión
+                <button type="button" disabled={pending} onClick={() => move([photo.id], "approved")} className={soft}>
+                  Devolver al álbum
                 </button>
               )}
             </div>

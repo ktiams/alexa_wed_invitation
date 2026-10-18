@@ -62,14 +62,18 @@ export async function submitRSVP(
     return { success: false, error: "No pudimos guardar tu respuesta. Inténtalo de nuevo en un momento." };
   }
 
+  // Mensaje privado para los novios: solo se lee en el panel (Invitados).
   if (data.message?.trim()) {
-    await supabase.from("guest_messages").insert({
+    const { error: messageError } = await supabase.from("guest_messages").insert({
       guest_id: guestId,
       guest_name: data.full_name,
       message: data.message.trim(),
       is_approved: false,
       is_public: false,
     });
+    // La confirmación ya quedó guardada; no se le muestra error al invitado, pero queda
+    // en los registros de Vercel para no perder el mensaje sin enterarnos.
+    if (messageError) console.error("RSVP: no se guardó el mensaje", messageError.message);
   }
 
   return { success: true, guestId };

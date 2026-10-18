@@ -52,17 +52,20 @@ app/
 │   ├── rsvp/page.tsx               # /rsvp — formulario RSVP independiente
 │   └── gift/page.tsx               # /gift?guestId=... — post-RSVP
 │
-└── (admin)/                        # Layout admin (con sidebar)
+└── (admin)/
     └── admin/
-        ├── layout.tsx              # Sidebar + force-dynamic
-        ├── page.tsx                # /admin — Panel principal
-        ├── login/page.tsx          # /admin/login — autenticación
-        ├── guests/page.tsx         # /admin/guests — tabla de invitados
-        ├── guests/[id]/page.tsx    # /admin/guests/:id — perfil de invitado
-        ├── messages/page.tsx       # /admin/messages — moderación de mensajes
-        ├── gifts/page.tsx          # /admin/gifts — verificación de regalos
-        └── settings/page.tsx       # /admin/settings — datos de la boda
+        ├── layout.tsx              # force-dynamic, título y noindex (sin navegación)
+        ├── login/page.tsx          # /admin/login — foto de los novios + formulario
+        └── (panel)/                # Panel de los novios (desde el 18 oct 2026)
+            ├── layout.tsx          # Pestañas (AdminNav) + destellos de fondo
+            ├── page.tsx            # /admin — Invitados
+            ├── autorizaciones/     # /admin/autorizaciones — fotos por aprobar
+            └── fotos/              # /admin/fotos — QR y álbum (?estado=rejected)
+        ├── tarjeta-qr/page.tsx     # /admin/tarjeta-qr — tarjeta de mesa para imprimir
+        └── qr-album/route.ts       # /admin/qr-album — PNG del QR (descarga)
 ```
+
+El grupo `(panel)` existe para que el login no lleve las pestañas ni los destellos. Ya no hay Resumen, Mensajes, Regalos, detalle de invitado ni Configuración: los novios no pueden cambiar datos de la invitación.
 
 ### Flujo de datos
 
@@ -72,16 +75,16 @@ Guest visita / → RSVPForm (Server Action submitRSVP)
   → GiftSubmissionForm (Server Action submitGift)
   → INSERT gift_transactions
 
-Admin visita /admin → proxy.ts verifica sesión Supabase
-  → Admin usa Server Actions para leer/mutar con service role (bypass RLS)
+Novios visitan /admin → proxy.ts verifica sesión Supabase
+  → las páginas leen con service role (bypass RLS); la única acción es aprobar o rechazar fotos
 ```
 
 ### Dos superficies
 
 | Superficie | Audiencia | Auth | Datos |
 |---|---|---|---|
-| Página pública `/` | Invitados | Anon | Solo lectura de settings + mensajes aprobados/públicos. INSERT en guests, gifts, messages |
-| Dashboard `/admin` | Alexa (la novia) | Supabase Auth (email+password) | Full CRUD con service role key |
+| Página pública `/` | Invitados | Anon | Solo lectura de settings. INSERT en guests, gifts, messages |
+| Panel `/admin` | Los novios | Supabase Auth (email+password) | Lectura de invitados, mensajes y avisos de regalo; aprobar fotos del álbum |
 
 ---
 
@@ -159,6 +162,14 @@ Todas las tablas tienen trigger `set_updated_at()` automático.
 Archivo: `supabase/migrations/001_initial_schema.sql`
 Incluye: creación de tablas, triggers, RLS policies, seed de `wedding_settings`.
 
+### Evitar que Supabase pause el proyecto
+
+El plan gratis de Supabase pausa el proyecto tras 7 días sin actividad. Un **Vercel Cron** (`vercel.json`) llama `/api/keepalive` todos los días a las 14:00 UTC (10:00 a. m. en Puerto Rico); la ruta hace una lectura mínima de `wedding_settings` con la llave pública y responde `{ ok: true }`. El usuario pidió "al menos cada 3 días": diario deja margen si alguna corrida falla.
+
+- Solo corre en producción (después del deploy de `master`). Las corridas se ven en Vercel → proyecto → Settings → Cron Jobs, y los errores en los logs ("keepalive: Supabase no respondió").
+- En el plan Hobby de Vercel un cron puede correr como máximo una vez al día y la hora exacta varía dentro de esa hora.
+- Opcional: definir `CRON_SECRET` en las variables de entorno de Vercel. Con ella, la ruta solo responde a Vercel Cron; sin ella cualquiera puede llamarla, lo que no expone datos.
+
 ---
 
 ## Variables de entorno
@@ -169,6 +180,8 @@ Archivo: `.env.local` (no commitear)
 NEXT_PUBLIC_SUPABASE_URL=https://pjyaqjjpmjesjwbbmifz.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
 SUPABASE_SERVICE_ROLE_KEY=eyJ...
+# Opcional, solo en Vercel: protege /api/keepalive (ver "Evitar que Supabase pause el proyecto")
+CRON_SECRET=...
 ```
 
 ---
@@ -187,7 +200,7 @@ Los nombres viejos de los tokens se conservaron para no tocar cada componente; c
 | `card` | `#fffdf9` | | Superficie de tarjetas y formularios |
 | `parchment` / `champagne-light` | `#f1e5d5` | Champán claro | Secciones alternas ("Cuándo y dónde", cierre) |
 | `champagne` | `#e2cdb2` | Champán | Detalles |
-| `beige` | `#d8c3a6` | Beige | Interruptores, bordes marcados |
+| `beige` | `#d8c3a6` | Beige | Bordes marcados |
 | `nude` / `nude-light` | `#ebcfc3` / `#f6e6de` | Nude rosado | Sección RSVP, aviso de adultos |
 | `blush` | `#e2ada5` | Rosa | Acento suave |
 | `silver` / `gold` | `#c49a4e` | Dorado | Líneas, íconos, el "&". Nunca para texto pequeño (2.4:1) |
@@ -201,7 +214,7 @@ Los nombres viejos de los tokens se conservaron para no tocar cada componente; c
 
 Tokens definidos en `app/globals.css` vía `@theme inline {}`. `tailwind.config.ts` **no lo carga Tailwind v4** (no hay `@config`); solo sirve de referencia para el IDE. Por eso `shadow-warm*` y `animate-slide-left` también se definen en `globals.css`.
 
-Clases propias en `globals.css`: `premium-card` (tarjeta con doble borde, la usa el panel), `soft-card` (tarjeta de un solo borde para la invitación), `snap-row` (carrusel horizontal nativo) y `names-3d` (nombres de la portada con borde dorado, relieve dorado hacia abajo y sombra suave).
+Clases propias en `globals.css`: `premium-card` (tarjeta con doble borde; hoy sin uso), `soft-card` (tarjeta de un solo borde para la invitación), `snap-row` (carrusel horizontal nativo) y `names-3d` (nombres de la portada con borde dorado, relieve dorado hacia abajo y sombra suave).
 
 ### Tipografía
 
@@ -230,7 +243,7 @@ Todos los labels de sección y UI usan `text-sm uppercase tracking-wider text-si
 
 ### Públicos (`components/public/`)
 
-Orden en la home (diseño mobile first, unas 6.5 pantallas en un iPhone): portada → galería → cuándo y dónde → lo que debes saber → RSVP → regalo → deseos → cierre, más la barra fija.
+Orden en la home (diseño mobile first, unas 6.5 pantallas en un iPhone): portada → galería → cuándo y dónde → lo que debes saber → RSVP → regalo → álbum → cierre, más la barra fija. La sección pública de deseos (`MessageCarousel`) se quitó el 18 oct 2026: el campo del RSVP dice "Mensaje para los novios", así que los mensajes son privados y solo se leen en el panel.
 
 | Componente | Sección | Descripción |
 |---|---|---|
@@ -245,14 +258,13 @@ Orden en la home (diseño mobile first, unas 6.5 pantallas en un iPhone): portad
 | `AlbumSection` | `#album` | "Álbum de fotos": antes de la boda explica el QR y los pasos; con la subida abierta, botón "Subir mis fotos"; con el álbum publicado, 6 miniaturas y "Ver el álbum". |
 | `PhotoUploader` | `/album/subir` | Nombre, elegir fotos, reducción en el celular (1600 px y miniatura de 480 px, JPEG sin metadata) y subida directa a Storage con URLs firmadas. Máximo 8 por celular. |
 | `AlbumGallery` | `/album` | Cuadrícula de fotos aprobadas con visor a pantalla completa (flechas, deslizar, Esc). |
-| `PearlButton` (`components/ui/pearl-button.tsx`) | toda la invitación | Botón perla (componente de 21st.dev) con colores de la paleta: `tone="cacao"` para acciones principales (Confirmar asistencia en portada, barra y formulario; Copiar número; Avisar de mi regalo) y `tone="champan"` para secundarias (Agregar al calendario). Con `href` es un enlace. Estilos en `.pearl-button` de `globals.css`, a 16 px para celular; el hover solo en dispositivos con puntero. Contraste mejorado (18 oct 2026): texto sólido (ivory sobre cacao 10.2:1, cacao sobre champán 7.2:1), peso 600, por encima del brillo y sin la máscara que lo desvanecía. El panel sigue usando `Button`. |
-| `SparklesCore` (`components/ui/sparkles.tsx`) | `#detalles` y `#rsvp` | Destellos de fondo con profundidad, en canvas propio (sin tsparticles ni framer-motion): capas lejos/medio/cerca (puntos nítidos, estrellas ✦ y bokeh), suben a 8–60 px/s con vaivén y hacen parallax al hacer scroll. Sprites pre-dibujados, pausa fuera de pantalla, sin interacción, quieto con `prefers-reduced-motion`, 60 % de densidad en pantallas < 640 px. Ajustes para fondos claros en `lib/sparkles.ts`. Por decisión de los novios va solo en esas dos secciones; no ponerlo en "Lo que debes saber" (dice "nada de brillos"). |
+| `PearlButton` (`components/ui/pearl-button.tsx`) | toda la invitación | Botón perla (componente de 21st.dev) con colores de la paleta: `tone="cacao"` para acciones principales (Confirmar asistencia en portada, barra y formulario; Copiar número; Avisar de mi regalo) y `tone="champan"` para secundarias (Agregar al calendario). Con `href` es un enlace. Estilos en `.pearl-button` de `globals.css`, a 16 px para celular; el hover solo en dispositivos con puntero. Contraste mejorado (18 oct 2026): texto sólido (ivory sobre cacao 10.2:1, cacao sobre champán 7.2:1), peso 600, por encima del brillo y sin la máscara que lo desvanecía. En el panel: "Entrar", "Aprobar las N fotos" y "Descargar QR" (champán, con la clase `pearl-compact` más chica). |
+| `SparklesCore` (`components/ui/sparkles.tsx`) | `#detalles`, `#rsvp` y fondo fijo del panel | Destellos de fondo con profundidad, en canvas propio (sin tsparticles ni framer-motion): capas lejos/medio/cerca (puntos nítidos, estrellas ✦ y bokeh), suben a 8–60 px/s con vaivén y hacen parallax al hacer scroll. Sprites pre-dibujados, pausa fuera de pantalla, sin interacción, quieto con `prefers-reduced-motion`, 60 % de densidad en pantallas < 640 px. Ajustes para fondos claros en `lib/sparkles.ts`. Por decisión de los novios va solo en esas dos secciones; no ponerlo en "Lo que debes saber" (dice "nada de brillos"). |
 | `CountdownTimer` | `#detalles` | Cuenta regresiva en una fila de 4 (client). |
 | `GuestGuidelines` | `#vestimenta` | "Lo que debes saber": código de vestimenta (escritorio: imagen oficial completa; móvil: carrusel de 3 looks + colores y reglas como texto) y aviso "Una noche para adultos". |
 | `RSVPForm` | `#rsvp` | Primero Sí/No. Si asiste: interruptor de acompañante (máximo uno, nombre obligatorio) y dos confirmaciones (solo adultos, vestimenta). Si no asiste, no se piden. |
 | `GiftSection` | `#regalo` y `/gift` | Regalo por ATH Móvil: número de Alexa, botón "Copiar número" y pasos. Ver "Regalo por ATH Móvil". |
-| `GiftSubmissionForm` | `/gift` | Aviso de regalo enviado (ATH Móvil u Otro). |
-| `MessageCarousel` | `#messages` | Carrusel infinito con mensajes aprobados/públicos. |
+| `GiftSubmissionForm` | `/gift` | Aviso de regalo enviado (ATH Móvil u Otro). Nadie lo verifica: los novios lo ven en Invitados. |
 | `Footer` | `/` | Nombres y fecha. |
 
 ### Portada y tipografía
@@ -261,15 +273,20 @@ Combinación tomada de una tarjeta de referencia: caligrafía **Great Vibes** (`
 
 ### Álbum de fotos de los invitados
 
-- **Dónde**: sección `#album` en la invitación (después de Regalo); QR en las mesas que lleva a `/album/subir`; álbum en `/album`; moderación en `/admin/fotos`.
+- **Dónde**: sección `#album` en la invitación (después de Regalo); QR en las mesas que lleva a `/album/subir`; álbum en `/album`; aprobación en `/admin/autorizaciones` y álbum en `/admin/fotos`.
 - **Datos**: migración `supabase/migrations/002_album.sql` → tabla `album_photos`, bucket **privado** `album` y columnas `photo_upload_enabled` / `album_published` en `wedding_settings`. Mientras no se aplique, todo muestra el estado "se activa el día de la boda" y el panel avisa que falta la migración.
+- **Se abre solo por fecha** (`getAlbumSettings` en `lib/album.ts`, hora de Puerto Rico): la subida desde el 5 de diciembre de 2026 y el álbum en la invitación desde el 6 de diciembre, solo con fotos aprobadas. Los novios no tienen interruptores. Las dos columnas de `wedding_settings` siguen sirviendo para abrirlo antes a mano desde Supabase (por ejemplo, para probar una subida).
 - **Subida**: `startAlbumUpload` (Server Action) valida que la subida esté abierta y el límite de 8 por celular (cookie anónima `aa_album_uid`) y devuelve URLs firmadas de subida; el navegador sube foto + miniatura directo a Storage (no pasa por Vercel, que limita el tamaño de las peticiones); `finishAlbumUpload` registra solo lo que de verdad está en Storage, en estado `pending`.
 - **Ver**: el servidor firma URLs de 1 hora para las fotos aprobadas (bucket privado: las pendientes nunca son públicas).
-- **Panel**: interruptores "Subida de fotos" y "Álbum público", QR para descargar (paquete `qrcode`) y pestañas Por revisar / Aprobadas / Rechazadas con aprobar, rechazar o aprobar todas.
+- **Panel**: Autorizaciones muestra las fotos por revisar (aprobar, rechazar o aprobar todas; el número sale en la pestaña). Fotos tiene las pestañas En el álbum / Rechazadas, con "Quitar del álbum" y "Devolver al álbum".
+- **QR del álbum** (paquete `qrcode`, apunta a `ALBUM_UPLOAD_URL` de `lib/album.ts`): tarjeta `AlbumQrCard` arriba de Fotos, visible aunque falte la migración, con tres acciones:
+  - "Imprimir para las mesas" → `/admin/tarjeta-qr`: tarjeta de mesa de 5 × 7 in (una por hoja carta) con flores, nombres, fecha y el QR; botón que abre el diálogo de impresión. Fuera del grupo `(panel)` para imprimir sin pestañas.
+  - "Compartir enlace" (`ShareAlbumLink`): menú de compartir del teléfono; en computadora copia el enlace.
+  - "Guardar imagen del QR" → `/admin/qr-album`: PNG de 1200 px para guardar o mandar a imprimir.
 
 ### Seguridad del panel
 
-Las Server Actions son endpoints públicos aunque `proxy.ts` proteja las páginas. Todas las acciones de `lib/actions/admin/*` y las de administración del álbum llaman primero a `requireAdmin()` (`lib/auth/requireAdmin.ts`), que exige sesión de Supabase Auth.
+Las Server Actions son endpoints públicos aunque `proxy.ts` proteja las páginas. La única acción del panel, `setPhotoStatus` (`lib/actions/album.ts`), llama primero a `requireAdmin()` (`lib/auth/requireAdmin.ts`), que exige sesión de Supabase Auth. Toda acción nueva de administración debe hacer lo mismo.
 
 ### Regalo por ATH Móvil
 
@@ -294,23 +311,18 @@ Colores tomados de la imagen: blanco `#f7f5f4`, crema `#e7d5c6`, rosa `#eec1be`.
 
 | Componente | Descripción |
 |---|---|
-| `AdminSidebar` | Navegación lateral. Sign out con `supabase.auth.signOut()`. |
-| `DashboardStatsGrid` | 9 stat cards: asistencia, regalos, mensajes pendientes. |
-| `MessageApprovalCard` | Card con acciones "Aprobar y Publicar" / "Despublicar". |
-| `GiftVerificationCard` | Card con acciones "Verificar" / "Rechazar". |
-| `GuestProfileActions` | Textarea de notas internas de admin con auto-save. |
-| `GiftStatusBadge` | Badge Verificado/Pendiente/Rechazado. |
-| `CSVExportButton` | Exporta tabla de invitados a CSV descargable. |
-| `SettingsForm` | Edición de todos los campos de `wedding_settings`. |
+| `AdminNav` | Tres pestañas (Invitados, Autorizaciones con el número de fotos por revisar, Fotos) y "Salir". En el celular, barra fija abajo; en la computadora, arriba junto al monograma. |
+| `PhotoModeration` | Cuadrícula de fotos (2 columnas en el celular) con aprobar/rechazar, "Aprobar las N fotos" (botón perla), "Quitar del álbum" y "Devolver al álbum". |
+| `AlbumSetupNotice` | Aviso mientras falte la migración 002. |
+| `AlbumQrCard` / `ShareAlbumLink` / `PrintButton` | QR del álbum en Fotos: imprimir, compartir enlace y guardar imagen. |
+
+La lista de Invitados (`app/(admin)/admin/(panel)/page.tsx`) no tiene botones: arriba cuántas personas vienen (invitados que dijeron que sí + acompañantes) y cuántos mensajes y regalos avisados hay; abajo un `<details>` por invitado. El mensaje privado (hasta 3 líneas, completo al abrir) y el regalo avisado se ven en la misma fila; al tocarla aparecen teléfono, correo y fecha de respuesta. Al final, los avisos de regalo que llegaron sin RSVP.
 
 ### UI primitivos (`components/ui/`)
 
 | Componente | Descripción |
 |---|---|
-| `Button` | Variantes: `primary`, `outline`, `danger`. Prop `loading` con spinner. |
 | `Input` / `Textarea` | Label + input + error inline. Focus ring gold. |
-| `Badge` | Variantes: `success`, `warning`, `danger`, `muted`. |
-| `Card` / `CardTitle` | Contenedor con borde y padding estándar para admin. |
 | `Spinner` | Indicador de carga SVG animado. |
 | `Modal` | Overlay genérico (disponible, aún no en uso activo). |
 
@@ -327,16 +339,13 @@ Colores tomados de la imagen: blanco `#f7f5f4`, crema `#e7d5c6`, rosa `#eec1be`.
 
 Ambas usan la firma `(prevState: State, formData: FormData)` requerida por `useActionState` de React 19.
 
-### Admin
+### Panel
 
 | Archivo | Funciones |
 |---|---|
-| `lib/actions/admin/guests.ts` | `addAdminNote` |
-| `lib/actions/admin/messages.ts` | `approveMessage`, `hideMessage` |
-| `lib/actions/admin/gifts.ts` | `verifyGift`, `rejectGift` |
-| `lib/actions/admin/settings.ts` | `updateWeddingSettings` |
+| `lib/actions/album.ts` | `setPhotoStatus` (aprobar, rechazar o devolver fotos; exige `requireAdmin()`) |
 
-Todas usan `createAdminClient()` (service role).
+Usa `createAdminClient()` (service role). Las acciones de mensajes, regalos, notas y configuración se borraron el 18 oct 2026 junto con sus páginas.
 
 ---
 
@@ -374,17 +383,14 @@ Usa Zod v4. Diferencias críticas vs Zod v3:
 4. Opcionalmente llena GiftSubmissionForm → submitGift()
 ```
 
-## Flujo del admin (Alexa)
+## Flujo del panel (los novios)
 
 ```
 1. Visita /admin → proxy.ts redirige a /admin/login si no hay sesión
-2. Login con email+password de Supabase Auth
-3. Panel principal → stats en tiempo real
-4. /admin/guests → tabla completa, exportar CSV
-5. /admin/guests/:id → perfil, notas, historial de regalos y mensajes
-6. /admin/messages → aprobar/publicar/despublicar mensajes para el carrusel
-7. /admin/gifts → verificar o rechazar regalos registrados
-8. /admin/settings → editar datos de la boda (QR code, instrucciones, etc.)
+2. Login con email+password de Supabase Auth (foto de los novios, botón perla "Entrar")
+3. Invitados → cuántas personas vienen; tocar un nombre para ver contacto, mensaje y regalo
+4. Autorizaciones → aprobar o rechazar las fotos que suben los invitados
+5. Fotos → descargar el QR de las mesas; ver el álbum y las rechazadas
 ```
 
 ---
@@ -392,14 +398,13 @@ Usa Zod v4. Diferencias críticas vs Zod v3:
 ## Pendiente / Ideas futuras
 
 - [ ] **Aplicar `supabase/migrations/002_album.sql`** en Supabase (SQL Editor) para activar el álbum; después probar una subida real y borrarla
-- [ ] Imprimir el QR del álbum (desde `/admin/fotos`) y, el día de la boda, activar "Subida de fotos"; después de la boda, aprobar fotos y activar "Álbum público"
+- [ ] Imprimir el QR del álbum (desde `/admin/fotos`). La subida y el álbum se abren solos por fecha; después de la boda, aprobar las fotos en Autorizaciones
 - [ ] Foto del venue para "Cuándo y dónde": guardarla en `public/images/venue/` y llenar `VENUE.photo`
 - [x] Probar un RSVP real de punta a punta: hecho el 18 oct 2026 en producción; se guardaron invitado, acompañante y mensaje, y se borraron
 - [ ] Probar los inicios de sesión del panel (`bizdev4uai@gmail.com`, `kmatos_santana@gmail.com`); hoy cualquier usuario autenticado es admin
-- [ ] Pasar a español `wedding_settings.dress_code` ("White, casual elegant…") y `gift_instructions` (habla de un QR); la invitación ya no los muestra, pero el panel sí los edita
+- [ ] Opcional: pasar a español `wedding_settings.dress_code` ("White, casual elegant…") y `gift_instructions` (habla de un QR). Ni la invitación ni el panel los muestran ya
 - [ ] Opcional: cuenta ATH Business para el botón de pago oficial (ver "Regalo por ATH Móvil")
 - [ ] Conseguir la imagen del código de vestimenta en mayor resolución
 - [ ] Aprobar con la novia la selección y el orden de las 16 fotos de la galería Love Story
 - [ ] Confirmación por email al invitado tras RSVP (Supabase Edge Function + Resend)
-- [ ] Paginación en la tabla de invitados (cuando supere ~100 registros)
-- [ ] Export detallado de regalos en CSV separado
+- [ ] Paginación o búsqueda en la lista de invitados (cuando supere ~100 registros)
