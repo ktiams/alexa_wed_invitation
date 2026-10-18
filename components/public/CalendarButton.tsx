@@ -69,8 +69,10 @@ export function CalendarButton({ variant = "outline" }: CalendarButtonProps) {
       {open && (
         <div
           id={menuId}
+          // Se abre hacia ARRIBA: debajo vienen otras secciones (la galería oscura) que se
+          // pintarían encima del menú.
           className={[
-            "absolute top-full z-30 mt-2 w-60 rounded-2xl border border-silver-light bg-card p-1.5 text-left shadow-warm-lg",
+            "absolute bottom-full z-30 mb-2 w-60 rounded-2xl border border-silver-light bg-card p-1.5 text-left shadow-warm-lg",
             variant === "tile" ? "right-0" : "left-1/2 -translate-x-1/2",
           ].join(" ")}
         >

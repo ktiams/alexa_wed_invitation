@@ -61,7 +61,7 @@ El panel `/admin` usa Supabase Auth (email + contraseña). Usuarios existentes: 
 Hecho y verificado en local (lint, TypeScript y build pasan; capturas en tamaño iPhone y escritorio):
 
 - Paleta nude (ivory, beige, nude rosado, champán, dorado + cacao y taupe) en la invitación y en el panel.
-- Portada clara con "Confirmar asistencia", "Agregar al calendario" (Google o `.ics` en `/calendario`, sin hora de fin) y días que faltan.
+- Portada "foto protagonista" con "Confirmar asistencia", "Agregar al calendario" (Google o `.ics` en `/calendario`, sin hora de fin; el menú abre hacia arriba) y días que faltan. En el celular cabe completa en una pantalla y se ajusta al alto de cada teléfono.
 - Barra fija para confirmar.
 - "Cuándo y dónde" (fecha, hora, lugar, Google Maps, Waze, calendario, cuenta regresiva) y "Lo que debes saber" (código de vestimenta nuevo y aviso para adultos con un texto cálido).
 - RSVP: Sí/No primero, máximo un acompañante con nombre obligatorio, confirmaciones solo para quien asiste, campos de 16 px. Corregido el guardado (RLS impedía el `.insert().select()`).
@@ -78,7 +78,7 @@ Hecho y verificado en local (lint, TypeScript y build pasan; capturas en tamaño
 Falta:
 
 1. ~~Empujar la rama y fusionar a `master`~~: en producción desde el 18 oct 2026.
-2. Probar un RSVP real y borrar el registro de prueba.
+2. ~~Probar un RSVP real~~: hecho el 18 oct 2026 en producción (asiste + acompañante + mensaje). Se guardó bien y se borró.
 3. Foto del venue: guardarla en `public/images/venue/` y llenar `VENUE.photo` en `lib/venue.ts`.
 4. **Álbum de fotos**: código listo. Aplicar `supabase/migrations/002_album.sql` en Supabase → SQL Editor (es aditiva) y probar una subida real.
 5. Pasar a español `wedding_settings.dress_code` y `gift_instructions`.
@@ -92,7 +92,7 @@ Falta:
 - **Diseño**: tokens de Tailwind v4 en `app/globals.css` (`@theme inline`). `tailwind.config.ts` no lo carga Tailwind v4. Fuentes Cormorant Garamond (`font-display`, y también `font-sans`) e Inter (`font-body`). Las secciones públicas están en `components/public/`.
 - **Antes de cambiar el diseño**: los novios quieren ver primero una propuesta visual y aprobarla.
 - **Datos del evento y del venue**: `lib/event.ts` (fecha, hora, calendario, `SITE_URL`) y `lib/venue.ts` (nombre, barrio, coordenadas, Google Maps, Waze, foto). `wedding_settings` en Supabase guarda también `venue_name` y `venue_city` para el admin; si cambia el venue, actualizar ambos.
-- **Fotos**: `public/images/hero.jpeg` (portada, siempre completa con `object-contain`), `public/images/love-story/love-01..16.jpeg` (galería; el número está en `PHOTO_COUNT` dentro de `LoveStorySection.tsx`) y `public/images/dress-code/` (código de vestimenta; original en `docs/referencias/`).
+- **Fotos**: `public/images/hero.jpeg` (portada, `object-cover` centrado en la pareja), `public/images/love-story/love-01..16.jpeg` (galería; el número está en `PHOTO_COUNT` dentro de `LoveStorySection.tsx`) y `public/images/dress-code/` (código de vestimenta; original en `docs/referencias/`).
 - **Migraciones de base de datos**: crear `supabase/migrations/NNN_nombre.sql` y aplicarla con `scripts/supabase-migrate.ps1 -File supabase\migrations\NNN_nombre.sql` (pide un Personal Access Token de Supabase; crearlo para la ocasión y borrarlo después) o pegando el SQL en el SQL Editor del dashboard.
 - **Finales de línea**: git usa `core.autocrlf=true`; el repo guarda LF y la copia de trabajo CRLF. No mezclar a mano.
 - **Git worktrees**: `next.config.ts` fija `turbopack.root` al directorio del proyecto; sin eso, dentro de un worktree bajo `.claude/` el watcher no recompilaba el CSS.
@@ -112,6 +112,7 @@ Falta:
 - Paleta "boda nude elegante" con portada clara, también en el panel.
 - Código de vestimenta: casual elegante, solamente blanco, crema o rosa, sin otros colores ni brillos.
 - Calendario sin hora de fin hasta que los novios la definan.
+- 18 oct 2026: portada "A" (foto protagonista con el texto encima). Lo más importante es que se adapte a cada teléfono: en el celular la portada completa (título, nombres, fecha, lugar y los dos botones) cabe en una pantalla.
 
 ---
 

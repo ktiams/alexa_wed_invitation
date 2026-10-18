@@ -124,6 +124,8 @@ export function EnvelopeIntro() {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const opening = reduce ? 0 : OPENING_MS;
     const closing = reduce ? 300 : CLOSING_MS;
+    // Sin foco en el sello: su anillo quedaría dibujado sobre la tarjeta al abrirse.
+    sealRef.current?.blur();
     go(reduce ? "closing" : "opening");
     timers.current.push(window.setTimeout(() => go("closing"), opening));
     timers.current.push(window.setTimeout(finish, opening + closing));
@@ -144,7 +146,6 @@ export function EnvelopeIntro() {
       return () => cancelAnimationFrame(frame);
     }
     document.documentElement.style.overflow = "hidden";
-    sealRef.current?.focus({ preventScroll: true });
     pending.push(window.setTimeout(open, AUTO_OPEN_MS));
     return () => {
       pending.forEach((t) => window.clearTimeout(t));

@@ -3,8 +3,9 @@
 import { useCountdown } from "@/lib/hooks/useCountdown";
 
 interface DaysLeftProps {
-  /** "pill": "Faltan 49 días" en la portada. "stacked": número grande arriba, para la barra fija. */
-  variant?: "pill" | "stacked";
+  /** "pill": "Faltan 49 días". "chip": versión pequeña sobre la foto de la portada.
+   *  "stacked": número grande arriba, para la barra fija. */
+  variant?: "pill" | "chip" | "stacked";
 }
 
 export function DaysLeft({ variant = "pill" }: DaysLeftProps) {
@@ -21,6 +22,18 @@ export function DaysLeft({ variant = "pill" }: DaysLeftProps) {
         </b>
         {unit} para la boda
       </span>
+    );
+  }
+
+  if (variant === "chip") {
+    return (
+      <p className="inline-flex items-baseline gap-1 rounded-full border border-ivory/40 bg-night/35 px-3 py-1 text-xs tracking-wide text-ivory/90 backdrop-blur-sm">
+        {days === 1 ? "Falta" : "Faltan"}
+        <b suppressHydrationWarning className="font-display text-base font-medium tabular-nums text-ivory">
+          {days}
+        </b>
+        {unit}
+      </p>
     );
   }
 
