@@ -11,7 +11,7 @@ Desde el 17 de octubre se trabaja con Claude Code.
 | Pieza | Dónde | Estado |
 |---|---|---|
 | Código | GitHub `ktiams/alexa_wed_invitation`, rama `master` | Producción. Next.js 16 + Supabase. |
-| Rama `rediseno-movil` | Mismo repo | Rediseño mobile first + paleta nude (ver sección 3). Sin fusionar con `master`. |
+| Rama `rediseno-movil` | Mismo repo | Rediseño mobile first + paleta nude (ver sección 3). Fusionada en `master` (fast-forward) y en producción desde el 18 oct 2026. |
 | Rama `claude/en-que-te-quedaste-c5b005` | Mismo contenido que un `master` viejo | Se puede borrar. |
 | PR #1 "nueva invitación Luxe" (ramas `feature/luxe-*`) | Reescritura en Vinext/Vite de agosto | **Descartada.** Cerrar el PR sin merge. |
 | Base de datos | Supabase, proyecto ref **`pjyaqjjpmjesjwbbmifz`** ("Alexas Wedding Invite's Project", org "Senzai- Katia's Department") | Esquema `001_initial_schema.sql` aplicado. Tablas sin datos al 17 oct. |
@@ -56,7 +56,7 @@ El panel `/admin` usa Supabase Auth (email + contraseña). Usuarios existentes: 
 
 ## 3. Pendiente inmediato (en orden)
 
-### Rediseño en la rama `rediseno-movil` (17 oct 2026)
+### Rediseño mobile first (17–18 oct 2026, en producción)
 
 Hecho y verificado en local (lint, TypeScript y build pasan; capturas en tamaño iPhone y escritorio):
 
@@ -77,7 +77,7 @@ Hecho y verificado en local (lint, TypeScript y build pasan; capturas en tamaño
 
 Falta:
 
-1. Empujar la rama, revisar el preview de Vercel en el celular y, con el visto bueno, fusionar a `master`.
+1. ~~Empujar la rama y fusionar a `master`~~: en producción desde el 18 oct 2026.
 2. Probar un RSVP real y borrar el registro de prueba.
 3. Foto del venue: guardarla en `public/images/venue/` y llenar `VENUE.photo` en `lib/venue.ts`.
 4. **Álbum de fotos**: código listo. Aplicar `supabase/migrations/002_album.sql` en Supabase → SQL Editor (es aditiva) y probar una subida real.
